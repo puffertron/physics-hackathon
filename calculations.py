@@ -27,4 +27,5 @@ def cartesian(amp: float, ang: float) -> Vec2:
     y = amp * math.sin(ang)
     return Vec2(x,y)
 
-printf(cartesian(amplitude()))
+
+
