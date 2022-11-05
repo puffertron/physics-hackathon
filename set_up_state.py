@@ -1,8 +1,9 @@
 import struct
-from parameter_prompt import Parameters
+from parameters import Parameters
 from ursina import *
 from dataclasses import dataclass
 from typing import List
+import calculations
 
 
 @dataclass
@@ -17,7 +18,7 @@ class VisualizerPixel:
         self.total_contribution:Vec2 = Vec2(0,0)
         
         for i in param.occluder: #TODO make it use the proper occluder from the instance of parameters
-            individualContribution:Contribution = Contribution(1,Vec2(1,1)) #TODO use Miles functions
+            individualContribution:Contribution = Contribution(calculations.distance(coordinates.x,coordinates.y,distz),Vec2(1,1)) #TODO use Miles functions
             self.contributions.append(individualContribution)
     
 class Visualizer:
@@ -33,7 +34,7 @@ class Visualizer:
 def setUpTimeState(param:Parameters) -> List[Visualizer]:
     visualizers:List[Visualizer] = []
     for i in range(param.visualizerAmount):
-        visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * i,param.resolution)) #TODO replace resoliution with lowresolution
+        visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * i,param.lowResolution)) #TODO replace resoliution with lowresolution
     return visualizers
     
     #param.detectorDistance/param.visualizerAmount * self.index
