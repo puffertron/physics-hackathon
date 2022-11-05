@@ -803,3 +803,8 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm,intellij,visualstudio,pythonvanilla,visualstudiocode,virtualenv
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/physics-hackathon.iml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/vcs.xml
