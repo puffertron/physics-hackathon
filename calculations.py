@@ -1,5 +1,5 @@
 import math
-
+from ursina import Vec2
 """
 using variables from parameter file
 
@@ -22,9 +22,9 @@ def amplitude(distz: float, dist: float) -> float:
 
 
 # Calculating pixel color values
-def cartesian(amp: float, ang: float) -> tuple:
+def cartesian(amp: float, ang: float) -> Vec2:
     x = amp * math.cos(ang)
     y = amp * math.sin(ang)
-    return x, y
+    return Vec2(x,y)
 
 printf(cartesian(amplitude()))
