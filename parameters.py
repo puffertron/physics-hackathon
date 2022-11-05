@@ -1,19 +1,19 @@
 from dataclasses import dataclass
-from ursina import *
+from ursina import Vec2
 
 @dataclass
 class Parameters:
-    tick_distance: float
 
-    wavelength: float
-    brightnessFactor: float
+    tick_distance: float = 1
 
-    occluder: set[Vec2]
+    wavelength: float = 500
+    brightnessFactor: float = 1
 
-    resolution: int
+    occluder: set[Vec2] = frozenset([Vec2(0, 0)])
 
-    visualizerAmount: int
+    resolution: int = 64
 
-    detectorResolution: int
-    detectorDistance: float
+    visualizerAmount: int = 2
+
+    detectorDistance: float = 3
 

@@ -1,6 +1,14 @@
 from ursina import *
 
-app = Ursina()
+from parameters import Parameters
 
-if __name__ == "main":
-    pass
+app = Ursina(title="Wave Simulation")
+ed = EditorCamera
+
+if __name__ == "__main__":
+    simulateButton = Button("Start Simulation")
+
+    app.run()
+
+    params = Parameters()
+
