@@ -17,7 +17,7 @@ detector = Entity(model='plane', texture=uvtex) # set a PIL texture
 uv = Entity(model='plane', texture=uvtex) # set a PIL texture
 
 
-
+#ds
 
 #UVMAP
 for x in range (0, uvtex.width):
