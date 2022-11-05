@@ -1,19 +1,30 @@
 import math
+
 """
 using variables from parameter file
 
 """
-PI = math.pi
-#distance calculation
-distance = math.sqrt(distancez ** 2 + distancex ** 2 + distancey ** 2)
 
 
-angle = (distance % lambda)/lambda * 2 * PI
+# distance calculation
+def distance(dx: float, dy: float, dz: float) -> float:
+    return math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
 
-#Calculation for wave amplitude
-amplitude = 1 / distance * (1 + (distancez / distance))
 
-#Calculating pixel color values
-red = amplitude * math.cos(angle)
-blue = distance
-green = aplitude * math.sin(angle)
+# angle calculation
+def angle(wavelength: float, dist: float) -> float:
+    return (dist % wavelength) / wavelength * 2 * math.pi
+
+
+# Calculation for wave amplitude
+def amplitude(distz: float, dist: float) -> float:
+    return 1 / dist * (1 + (distz / dist))
+
+
+# Calculating pixel color values
+def cartesian(amp: float, ang: float) -> tuple:
+    x = amp * math.cos(ang)
+    y = amp * math.sin(ang)
+    return x, y
+
+printf(cartesian(amplitude()))
