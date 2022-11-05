@@ -27,4 +27,5 @@ def cartesian(amp: float, ang: float) -> tuple:
     y = amp * math.sin(ang)
     return x, y
 
-printf(cartesian(amplitude()))
+
+
