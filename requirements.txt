@@ -1,0 +1,8 @@
+numpy==1.23.4
+Panda3D==1.10.12
+panda3d-gltf==0.13
+panda3d-simplepbr==0.10
+Pillow==9.3.0
+pyperclip==1.8.2
+scipy==1.9.3
+ursina==5.1.0
