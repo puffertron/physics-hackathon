@@ -1,6 +1,7 @@
 from ursina import *
 from PIL import Image
 import struct
+import utils
 
 app = Ursina()
 
@@ -9,9 +10,11 @@ resolution = 16
 uvtex = Texture(Image.new(mode="RGBA", size=(resolution,resolution), color=(255,0,0,255)))
 uvtex.default_filtering = None
 
+
 occtex = Image.open('images/2slit.png')
-occtex = occtex.resize((resolution, resolution), resample=0)
-occtex = Texture(occtex)
+# occtex = occtex.resize((resolution, resolution), resample=0)
+occtex = Texture(utils.resize_image(occtex, 16, 16))
+
 
 
 occulder = Entity(model='plane', texture=occtex, position=Vec3(0,2,0))

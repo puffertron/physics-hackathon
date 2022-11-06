@@ -1,10 +1,12 @@
 from ursina import *
 from PIL import Image
-
+import utils 
 from parameters import Parameters
-import set_up_stateplanes
 
 
+
+def init_planes():
+    pass
 
 def render_occluder(tex):
     occluder = Entity(mplanesodel='plane', texture=tex, position=Vec3(0,3,0))
@@ -16,19 +18,18 @@ def render_visualisers(visuals):
         plane = Entity(model='plane', texture=tex, position=(0,i,0))
 
 
+def update():
+
 
 app = Ursina(title="Wave Simulation")
 ed = EditorCamera
-planes
-__softParameters: Parameters = Parameters()
-parameters: Parameters = __softParameters
 
-    #get initialised planes
-    visualisers = set_up_state.setUpTimeState(params)
+#get initialised planes
+visualisers = set_up_state.setUpTimeState(params)
 
-    #render occluder
-    render_occulder(occtex)
-    render_visualisers(visualisers)
+#render occluder
+render_occulder(occtex)
+render_visualisers(visualisers)
 
 
 
