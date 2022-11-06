@@ -1,45 +1,49 @@
-from typing import Callable, List
-
+from typing import Callable
 from PIL import Image
 from ursina import *
-from ursina.prefabs.file_browser import FileBrowser, FileButton
-
+from ursina.prefabs.file_browser import FileBrowser
 import parameters
 import utils
 
 
-def getParameters():
+def get_params():
     return parameters.SoftInstance
 
 
-def setParam(name: str, value):
+def set_param(name: str, value):
     print(f"Setting {name} to {value}")
 
     # This throws an error if the parameter doesn't exist (member doesn't exist)
-    old = getattr(getParameters(), name)
+    old = getattr(get_params(), name)
 
     # Ensure the given value is an alright type
     if not isinstance(value, type(value)):
         raise TypeError(f"To set {name} of parameters, it must be of the same type as {old} (current value)")
 
-    setattr(getParameters(), name, value)
+    setattr(get_params(), name, value)
 
 
-def makeFileButtonText(selectedFile):
+def make_file_button_text(selectedFile):
     return f"Select Slit Mask ({selectedFile})"
 
 
+def updateResolution(slider: Slider) -> float:
+    """Sets the value on the slider to an appropriate resolution. Returns the new value"""
+    slider.value = utils.find_nearest_2n(slider.value)
+    return slider.value
+
+
 class ParametersPanel(WindowPanel):
-    def showFileSelector(self):
-        self.fileBrowser.enabled = True
-        self.fileBrowser.visible = True
+    def show_file_selector(self):
+        self.file_browser.enabled = True
+        self.file_browser.visible = True
         self.enabled = False  # Hide parameters panel
         self.visible = False
 
-    def onSelectFile(self, paths):
+    def on_select_file(self, paths):
         path: Path = paths[0]
-        setParam("occluder", Image.open(path))  # Set parameter to selected image
-        self.fileButton.text = makeFileButtonText(path.name)
+        set_param("occluder", Image.open(path))  # Set parameter to selected image
+        self.file_button.text = make_file_button_text(path.name)
         self.enabled = True  # Show parameters panel
         self.visible = True
 
@@ -47,87 +51,82 @@ class ParametersPanel(WindowPanel):
     def onSelectFileCancelled(self):
         self.enabled = True  # Show parameters panel
         self.visible = True
-        self.fileBrowser.visible = False
-        self.fileBrowser.enabled = False
+        self.file_browser.visible = False
+        self.file_browser.enabled = False
 
-    def updateResolution(self, slider: Slider) -> float:
-        """Sets the value on the slider to an appropriate resolution. Returns the new value"""
-        slider.value = utils.find_nearest_2n(slider.value)
-        return slider.value
+    def update_low_res(self):
+        set_param("lowResolution", updateResolution(self.low_res))
 
-    def updateLowResolution(self):
-        setParam("lowResolution", self.updateResolution(self.lowResolution))
+    def update_high_res(self):
+        set_param("highResolution", updateResolution(self.high_res))
 
-    def updateHighResolution(self):
-        setParam("highResolution", self.updateResolution(self.highResolution))
+    def on_simulate(self):
+        get_params().printToConsole()
+        self.simulate_func()
 
-    def clickSimulate(self):
-        getParameters().printToConsole()
-        self.simulateFunction()
-
-    def __init__(self, simulateFunction: Callable):
+    def __init__(self, simulate_func: Callable):
         """
         simulateFunction: function that will be called when the simulate button is called
         """
 
-        self.simulateFunction = simulateFunction
+        self.simulate_func = simulate_func
 
         # UI elements:
 
         self.wavelength = ThinSlider(min=200, max=1000, default=500)
-        self.wavelength.on_value_changed = lambda: setParam("wavelength", self.wavelength.value)
+        self.wavelength.on_value_changed = lambda: set_param("wavelength", self.wavelength.value)
 
         self.brightness = ThinSlider(min=1, max=1000, step=1)
-        self.brightness.on_value_changed = lambda: setParam("brightnessFactor", self.brightness.value)
+        self.brightness.on_value_changed = lambda: set_param("brightnessFactor", self.brightness.value)
 
         self.tick = ThinSlider(min=100, max=800, default=300)
-        self.tick.on_value_changed = lambda: setParam("tick_distance", self.tick.value)
+        self.tick.on_value_changed = lambda: set_param("tick_distance", self.tick.value)
 
-        self.fileButton = Button(makeFileButtonText(None))
-        self.fileBrowser = FileBrowser(
+        self.file_button = Button(make_file_button_text(None))
+        self.file_browser = FileBrowser(
             file_types=[".jpeg", ".jpg", ".png"],
             start_path=Path("images").resolve(),
             visible=False,  # This only shows when it is opened with the fileButton
             enable=False
         )
         # Open the file selector
-        self.fileButton.on_click = self.showFileSelector
+        self.file_button.on_click = self.show_file_selector
         # The submit button on the file selector
-        self.fileBrowser.on_submit = self.onSelectFile
+        self.file_browser.on_submit = self.on_select_file
         # The close button and the little x at the corner of the file selector
-        self.fileBrowser.cancel_button.on_click = self.onSelectFileCancelled
-        self.fileBrowser.cancel_button_2.on_click = self.onSelectFileCancelled
+        self.file_browser.cancel_button.on_click = self.onSelectFileCancelled
+        self.file_browser.cancel_button_2.on_click = self.onSelectFileCancelled
 
-        self.visualizerAmount = ThinSlider(min=2, max=10, default=2, step=1)
-        self.visualizerAmount.on_value_changed = lambda: setParam("visualizerAmount", self.visualizerAmount.value)
+        self.visualizer_amount = ThinSlider(min=2, max=10, default=2, step=1)
+        self.visualizer_amount.on_value_changed = lambda: set_param("visualizerAmount", self.visualizer_amount.value)
 
-        self.detectorDistance = ThinSlider(min=10, max=1000, default=500)
-        self.detectorDistance.on_value_changed = lambda: setParam("detectorDistance", self.detectorDistance.value)
+        self.detector_distance = ThinSlider(min=10, max=1000, default=500)
+        self.detector_distance.on_value_changed = lambda: set_param("detectorDistance", self.detector_distance.value)
 
-        self.lowResolution = ThinSlider(min=16, max=128, step=16, default=16)
-        self.lowResolution.on_value_changed = lambda: self.updateLowResolution()
+        self.low_res = ThinSlider(min=16, max=128, step=16, default=16)
+        self.low_res.on_value_changed = lambda: self.update_low_res()
 
-        self.highResolution = ThinSlider(min=32, max=516, step=32, default=32)
-        self.highResolution.on_value_changed = lambda: self.updateHighResolution()
+        self.high_res = ThinSlider(min=32, max=516, step=32, default=32)
+        self.high_res.on_value_changed = lambda: self.update_high_res()
 
         self.simulate = Button(text="Run Simulation")
-        self.simulate.on_click = lambda: getParameters().printToConsole()
+        self.simulate.on_click = self.on_simulate
 
         super().__init__(title="Simulation Parameters", position=(-.5, .25), content=(
             Text("Wavelength"),
             self.wavelength,
-            Text("Tick Distance"),
+            Text("Tick distance"),
             self.tick,
-            Text("Brightness Factor"),
+            Text("Brightness factor"),
             self.brightness,
-            self.fileButton,
+            self.file_button,
             Text("Number of visualizers"),
-            self.visualizerAmount,
+            self.visualizer_amount,
             Text("Distance to last visualizer"),
-            self.detectorDistance,
-            Text("Low Resolution"),
-            self.lowResolution,
-            Text("High Resolution (Last visualizer)"),
-            self.highResolution,
+            self.detector_distance,
+            Text("Low resolution"),
+            self.low_res,
+            Text("High resolution (Last visualizer)"),
+            self.high_res,
             self.simulate
         ))
