@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 from typing import Set
+from PIL import Image
 
 from ursina import *
 
+Instance = None
 
 @dataclass
 class Parameters:
@@ -12,7 +14,7 @@ class Parameters:
     brightnessFactor: float = 1
 
     
-    occluder: Texture = Texture("images/2slit.png")
+    occluder: Image = Image.open("images/2slit.png")
     
     visualizerAmount: int = 1
 
@@ -21,14 +23,6 @@ class Parameters:
     lowResolution: int = 64  # For all planes in time simulation
     highResolution: int = 128  # For all planes in final state simulation
 
+    def initParams():
+        Instance = Parameters()
 
-def get_occlusion_holes(tex: Texture):
-    holes = []
-    for x in range(0, tex.width):
-        for y in range(0, tex.height):
-            print (tex.get_pixel(x,y).brightness)
-            if tex.get_pixel(x, y).brightness < 0.5:
-                #these pixels are holes
-                holes.append(Vec2(x,y))
-    
-    return holes
