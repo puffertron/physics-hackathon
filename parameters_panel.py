@@ -6,7 +6,7 @@ import parameters
 import utils
 
 
-def get_params():
+def _get_params():
     return parameters.SoftInstance
 
 
@@ -14,13 +14,13 @@ def set_param(name: str, value):
     print(f"Setting {name} to {value}")
 
     # This throws an error if the parameter doesn't exist (member doesn't exist)
-    old = getattr(get_params(), name)
+    old = getattr(_get_params(), name)
 
     # Ensure the given value is an alright type
     if not isinstance(value, type(value)):
         raise TypeError(f"To set {name} of parameters, it must be of the same type as {old} (current value)")
 
-    setattr(get_params(), name, value)
+    setattr(_get_params(), name, value)
 
 
 def make_file_button_text(selectedFile):
@@ -36,39 +36,69 @@ def updateResolution(slider: Slider) -> float:
 class MainGui:
 
     def set_stopped(self):
-        self.parameters.enable = True
-        self.parameters.visible = True
-        self.start_stop.value = "stop"
+        self.param_panel.enable = True
+        self.param_panel.visible = True
+        self.run_switch.value = "stop"
 
     def __change_sim_state(self):
-        print("Trying to change state")
-        value: str = self.start_stop.value
+        value: str = self.run_switch.value
+        print("clicked:" + value)
         if value == "start":
-            self.parameters.enable = False
-            self.parameters.visible = False
+            # Only start if the file was correct
+            if self.param_panel.flush_parameters():
+                # Hide the parameter panel
+                self.param_panel.enable = False
+                self.param_panel.visible = False
 
-            self.start_sim()
+                self.start_sim()
+            else:
+                print("could not flush parameters")
+                # Note that this actually causes __change_sim_state to be called again
+                self.run_switch.value = False
+
         elif value == "stop":
-            self.parameters.enable = True
-            self.parameters.visible = True
+            self.param_panel.enable = True
+            self.param_panel.visible = True
             self.stop_sim()
         else:
             raise AssertionError(f"Start/Stop button group should have value of start or stop, has {value}")
 
     def __init__(self, start_sim: Callable, stop_sim: Callable):
 
-        self.parameters = ParametersPanel()
+        self.param_panel = ParametersPanel()
 
         self.start_sim = start_sim
         self.stop_sim = stop_sim
 
-        self.start_stop = ButtonGroup(("start", "stop"), default="stop", position=(.5, .5))
-        self.start_stop.on_value_changed = lambda: self.__change_sim_state()
-
-
+        self.run_switch = ButtonGroup(("start", "stop"), default="stop", position=(.5, .5))
+        self.run_switch.on_value_changed = lambda: self.__change_sim_state()
 
 
 class ParametersPanel(WindowPanel):
+
+    def flush_parameters(self) -> bool:
+        """
+        Flushing the parameters all at once is done so that what is seen in the GUI is always representative of the
+        parameters used by the simulation.
+        """
+
+        # Note: File selector flushed when the file is selected
+        if parameters.SoftInstance.occluder is None:
+            print("occluder is null")
+            self.file_warning.visible = True
+            return False
+
+        params = _get_params()
+        params.wavelength = self.wavelength.value
+        params.wavelength = self.wavelength.value
+        params.brightnessFactor = self.brightness.value
+        params.tick_distance = self.tick.value
+        params.visualizerAmount = self.visualizer_amount.value
+        params.detectorDistance = self.detector_distance.value
+        params.lowResolution = self.low_res.value
+        params.highResolution = self.high_res.value
+        return True
+
     def show_file_selector(self):
         self.file_browser.enabled = True
         self.file_browser.visible = True
@@ -77,8 +107,9 @@ class ParametersPanel(WindowPanel):
 
     def on_select_file(self, paths):
         path: Path = paths[0]
-        set_param("occluder", Image.open(path))  # Set parameter to selected image
+        _get_params().occluder = Image.open(path)  # Set parameter to selected image
         self.file_button.text = make_file_button_text(path.name)
+        self.file_warning.visible = False  # Note it may already be false
         self.enabled = True  # Show parameters panel
         self.visible = True
 
@@ -89,25 +120,16 @@ class ParametersPanel(WindowPanel):
         self.file_browser.visible = False
         self.file_browser.enabled = False
 
-    def update_low_res(self):
-        set_param("lowResolution", updateResolution(self.low_res))
-
-    def update_high_res(self):
-        set_param("highResolution", updateResolution(self.high_res))
-
     def __init__(self):
         """
         simulateFunction: function that will be called when the simulate button is called
         """
 
-        self.wavelength = ThinSlider(min=200, max=1000, default=500)
-        self.wavelength.on_value_changed = lambda: set_param("wavelength", self.wavelength.value)
+        self.file_warning = Text("A slit mask must be chosen before simulation", color=color.red, visible=False)
 
-        self.brightness = ThinSlider(min=1, max=1000, step=1)
-        self.brightness.on_value_changed = lambda: set_param("brightnessFactor", self.brightness.value)
-
-        self.tick = ThinSlider(min=100, max=800, default=300)
-        self.tick.on_value_changed = lambda: set_param("tick_distance", self.tick.value)
+        self.wavelength = ThinSlider(min=1, max=3, default=50)
+        self.brightness = ThinSlider(min=1, max=5, step=10)
+        self.tick = ThinSlider(min=1, max=3, default=100)
 
         self.file_button = Button(make_file_button_text(None))
         self.file_browser = FileBrowser(
@@ -125,16 +147,13 @@ class ParametersPanel(WindowPanel):
         self.file_browser.cancel_button_2.on_click = self.onSelectFileCancelled
 
         self.visualizer_amount = ThinSlider(min=2, max=10, default=2, step=1)
-        self.visualizer_amount.on_value_changed = lambda: set_param("visualizerAmount", self.visualizer_amount.value)
+        self.detector_distance = ThinSlider(min=1, max=12, default=10)
 
-        self.detector_distance = ThinSlider(min=10, max=1000, default=500)
-        self.detector_distance.on_value_changed = lambda: set_param("detectorDistance", self.detector_distance.value)
+        self.low_res = ThinSlider(min=8, max=128, step=16, default=16)
+        self.low_res.on_value_changed = lambda: updateResolution(self.low_res)
 
-        self.low_res = ThinSlider(min=16, max=128, step=16, default=16)
-        self.low_res.on_value_changed = self.update_low_res
-
-        self.high_res = ThinSlider(min=32, max=516, step=32, default=32)
-        self.high_res.on_value_changed = self.update_high_res
+        self.high_res = ThinSlider(min=16, max=512, step=16, default=32)
+        self.high_res.on_value_changed = lambda: updateResolution(self.high_res)
 
         super().__init__(title="Simulation Parameters", position=(-.5, .25), content=(
             Text("Wavelength"),

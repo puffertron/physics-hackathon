@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from PIL import Image
+
+from PIL.Image import Image
 
 SoftInstance = None
 Instance = None
@@ -11,15 +12,16 @@ class Parameters:
     wavelength: float = 5 #Also in pixels haha, every length unit is in pixles
     brightnessFactor: float = 10#Turn up to make brighter pixels, will probably need to be a few hundred or more to see anything
 
-    occluder: Image = Image.open("images/2slit.png")
+    occluder: Image = None
 
     visualizerAmount: int = 4
 
     detectorDistance: float = 10
 
-    lowResolution: int = 32 # For all planes in time simulation
+    lowResolution: int = 16  # For all planes in time simulation
     highResolution: int = 32  # For all planes in final state simulation
-    
+
+
 
     def printToConsole(self):
 

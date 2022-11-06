@@ -1,11 +1,10 @@
-from copy import deepcopy
+import dataclasses
 
 from ursina import Ursina, destroy, Vec3, camera, window
 
-from parameters_panel import ParametersPanel, MainGui
 import parameters
+from parameters_panel import MainGui
 from t_sim import Simulation
-import t_sim_threading
 
 app = Ursina(title="Wave Simulation")
 window.fps_counter.enabled = False
@@ -19,12 +18,13 @@ sim: Simulation = None
 def simulate():
     global sim
 
-    print("SoftInstance:")
-    parameters.SoftInstance.printToConsole()
+    if sim is not None:
+        print("Warning: simulation is already running. Not starting again")
+        return
 
-    parameters.Instance = deepcopy(parameters.SoftInstance)
-
-    print("Instance")
+    # Shallow copy. PLI.Image appears to be immutable
+    parameters.Instance = dataclasses.replace(parameters.SoftInstance)
+    print("Simulation Parameters:")
     parameters.Instance.printToConsole()
 
     sim = Simulation()
@@ -35,9 +35,18 @@ def simulate():
 
 
 def stop_simulation():
-    sim.enable = False  # TODO: seems to do nothing if the sim is running
+    global sim
+
+    if sim is None:
+        print("WARNING: Tried to stop the simulation when it was not running")
+        return
+
+    sim.disable()
+    sim.visible = False
     destroy(sim)
-    pass
+    sim.disable()
+    sim.visible = False
+    sim = None
 
 
 if __name__ == "__main__":
