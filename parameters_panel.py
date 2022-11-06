@@ -90,11 +90,11 @@ class ParametersPanel(WindowPanel):
 
         params = _get_params()
         params.wavelength = self.wavelength.value * 0.001 #nm to um
-        params.brightnessFactor = self.brightness.value * 1
+        params.brightnessFactor = self.brightness.value * 100
         params.tick_distance = self.tick.value * 1000 #mm to um
         params.visualizerAmount = self.visualizer_amount.value * 1
         params.detectorDistance = self.detector_distance.value * 1000 #mm to um
-        params.lowResolution = self.low_res.value * 1
+        params.lowResolution = self.low_res.value
         params.width = self.width.value * 1000 #mm to um
         return True
 

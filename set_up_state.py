@@ -21,7 +21,7 @@ class VisualizerPixel:
         self.totalContribution:Vec2 = Vec2(0,0)
             
         for hole in holes:
-            distance = calculations.distance(coordinates.x-hole.x,coordinates.y-hole.y,distz)
+            distance = calculations.distance((coordinates.x-hole.x) * (param.width/param.lowResolution),(coordinates.y-hole.y) * (param.width/param.lowResolution),distz)
             individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,param.wavelength)))
             self.contributions.append(individualContribution)
     
@@ -89,7 +89,7 @@ def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
 #Ciaran's added code to sort the values by d-step so that the actual simulation part can run faster, will take longer to set up though    
 def modifiedSetUpTimeState(param:Parameters) -> Tuple[List[List[Dict[Vec2,Vec2]]], List[Visualizer]]:
     '''returns a list where where each element represents one visualizer with a list of time steps, each time step is a dictionary where the keys are the coordinates to a point on the visualizer and the values are the contribution vectors to be added in that step. The second thing is the original big data structure'''
-    maxNumberOfSteps:int = math.ceil(calculations.distance(param.lowResolution, param.lowResolution, param.detectorDistance) / param.tick_distance) #Max distance / distance per tick, rounded up
+    maxNumberOfSteps:int = math.ceil(calculations.distance(param.width, param.width, param.detectorDistance) / param.tick_distance) #Max distance / distance per tick, rounded up
     planesToAddOverTime:List[List[Dict[Vec2,Vec2]]] = []*param.visualizerAmount # We have one big list for each visualizer
     
     visualizers:List[Visualizer] = setUpTimeState(param)
