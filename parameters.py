@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from PIL.Image import Image
+from PIL import Image
 
 SoftInstance = None
 Instance = None
