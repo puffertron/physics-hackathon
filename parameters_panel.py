@@ -153,7 +153,7 @@ class ParametersPanel(WindowPanel):
 
         self.width = ThinSlider(min=10, max=100, step=1, default=50) # TODO: DEFAULTS
 
-        super().__init__(title="Simulation Parameters", position=(-.5, .25), content=(
+        super().__init__(title="Simulation Parameters", position=(-.63, .5), content=(
             Text("Wavelength (nm)"),
             self.wavelength,
             Text("Tick distance (mm)"),
