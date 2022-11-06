@@ -81,15 +81,16 @@ class Simulation(Entity):
         
         print("begun")
 
-
     #Logic for this code once it's cleaned up
 
     #update every pixel of every visualizer to add any waves that have reached it
     def update(self):
         if math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) <= self.lastTick:
+            t = time.perf_counter()
             print(f"update frame {self.currentTick} of {self.lastTick}")
             for i, visualizer in enumerate(self.visualisers):
                 currentVisualizerPlaneToAdd = self.planesToAddOverTime[i] #Putting this here so it doesn't have to do an extra accessing element on a list every time
+                variable = math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1 #speedy
                 for visualizerPixel in visualizer.pixels:
                     
                     #Old slower code from older set up function
@@ -98,8 +99,8 @@ class Simulation(Entity):
                     #        visualizerPixel.totalContribution += contribution.vec
                     
                     #Newer faster code for modified set up function
-                    if (currentVisualizerPlaneToAdd[math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1] is not None) and (visualizerPixel.coordinates in self.planesToAddOverTime[i][math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1]): #TODO stop redoing calc over and over again
-                        visualizerPixel.totalContribution += self.planesToAddOverTime[i][math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1][visualizerPixel.coordinates]
+                    if (currentVisualizerPlaneToAdd[variable] is not None) and (visualizerPixel.coordinates in currentVisualizerPlaneToAdd[variable]): #TODO stop redoing calc over and over again - done
+                        visualizerPixel.totalContribution += currentVisualizerPlaneToAdd[variable][visualizerPixel.coordinates]
                     '''
                     [i] - acesses the visualizer
                     [math.ceil(self.currenttickdistance / parameters.Instance.tick_distance)] - acesses the dictionary for the given distance step
@@ -113,10 +114,10 @@ class Simulation(Entity):
                                         int(visualizerPixel.coordinates.y), rgb(b, b, b))
                     v.texture.apply()
                     #print(f"{visualizerPixel.coordinates.x} - {visualizerPixel.coordinates.y}")
-            
+            print(time.perf_counter()-t)
             self.currentTick += 1
             self.currentTickDistance += parameters.Instance.tick_distance
-                        
+               
         #Then just need to draw it on the screen now that the pixel values are updated
 
 
