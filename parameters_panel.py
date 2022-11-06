@@ -92,6 +92,7 @@ class ParametersPanel(WindowPanel):
     def update_low_res(self):
         set_param("lowResolution", updateResolution(self.low_res))
 
+
     def update_high_res(self):
         set_param("highResolution", updateResolution(self.high_res))
 
@@ -105,6 +106,8 @@ class ParametersPanel(WindowPanel):
 
         self.brightness = ThinSlider(min=1, max=1000, step=1)
         self.brightness.on_value_changed = lambda: set_param("brightnessFactor", self.brightness.value)
+
+
 
         self.tick = ThinSlider(min=100, max=800, default=300)
         self.tick.on_value_changed = lambda: set_param("tick_distance", self.tick.value)
@@ -152,4 +155,6 @@ class ParametersPanel(WindowPanel):
             self.low_res,
             Text("High resolution (Last visualizer)"),
             self.high_res
+
+
         ))
