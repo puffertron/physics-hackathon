@@ -8,6 +8,7 @@ ed = EditorCamera
 
 if __name__ == "__main__":
 
+    parameters.initParams()
     paramPanel = ParametersPanel()
 
 

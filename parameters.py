@@ -32,6 +32,9 @@ class Parameters:
 
 def initParams():
     global SoftInstance, Instance
-    SoftInstance = Parameters()
-    Instance = Parameters()
 
+    if SoftInstance is None:
+        SoftInstance = Parameters()
+
+    if Instance is None:
+        Instance = Parameters()
