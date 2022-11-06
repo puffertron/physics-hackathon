@@ -49,6 +49,33 @@ class VisualizerPixel:
             individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,param.wavelength)))
             self.contributions.append(individualContribution)
     
+# class Visualizer: #THREADS!!!!
+#     def thread_pixels(self, x, holes, resolution, distz):
+#         print(f"Starting row {x} for Visualizer at dist {distz}")
+#         for y in range(resolution):
+#             self.pixels.append(VisualizerPixel(parameters.Instance, Vec2(x,y), distz, holes)) 
+
+    def __init__(self, param:Parameters, distz:float, resolution:int, holes:List[Vec2]):
+        self.distz:float = distz
+        self.pixels:List[VisualizerPixel] = []
+
+        p=mp.Pool(4)
+        p.starmap_async(self.thread_pixels, zip(range(0,resolution), repeat(holes), repeat(resolution), repeat(distz)))
+        p.close()
+        p.join()
+        
+
+# class Visualizer:
+#     def __init__(self, param:Parameters, distz:float, resolution:int, holes:List[Vec2]):
+#         self.distz:float = distz
+#         self.pixels:List[VisualizerPixel] = []
+
+#         p=mp.Pool(4)
+#         p.starmap_async(self.thread_pixels, zip(range(0,resolution), repeat(holes), repeat(resolution), repeat(distz)))
+#         p.close()
+#         p.join()
+        
+
 class Visualizer:
     def __init__(self, param:Parameters, distz:float, resolution:int, holes:List[Vec2]):
         self.distz:float = distz
@@ -63,10 +90,16 @@ class Visualizer:
 def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
     visualizers:List[Visualizer] = []
     if usecache == 0: #if no use cache
+        print("start:")
+        c = time.perf_counter()
+
         lowResHoles:List[Vec2] = utils.get_occlusion_holes(Texture(utils.resize_image(param.occluder,param.lowResolution))) #Uses low res occluder
         print(lowResHoles)
         for i in range(param.visualizerAmount):
             visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * (i+1), param.lowResolution, lowResHoles))
+
+
+        print(f"elapsed: {time.perf_counter()-c}")
 
         if cache == 1:
             #cache if needed
