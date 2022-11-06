@@ -95,8 +95,7 @@ class ParametersPanel(WindowPanel):
         params.visualizerAmount = self.visualizer_amount.value * 1
         params.detectorDistance = self.detector_distance.value * 1000 #mm to um
         params.lowResolution = self.low_res.value * 1
-        params.highResolution = self.high_res.value
-        params.width = self.width.value
+        params.width = self.width.value * 1000 #mm to um
         return True
 
     def show_file_selector(self):
@@ -152,22 +151,22 @@ class ParametersPanel(WindowPanel):
         self.low_res = ThinSlider(min=8, max=128, step=8, default=32)
         self.low_res.on_value_changed = lambda: updateResolution(self.low_res)
 
-        self.width = ThinSlider(min=100, max=1000, step=10, default=500) # TODO: DEFAULTS
+        self.width = ThinSlider(min=10, max=100, step=1, default=50) # TODO: DEFAULTS
 
         super().__init__(title="Simulation Parameters", position=(-.5, .25), content=(
-            Text("Wavelength"),
+            Text("Wavelength (nm)"),
             self.wavelength,
-            Text("Tick distance"),
+            Text("Tick distance (mm)"),
             self.tick,
             Text("Brightness factor"),
             self.brightness,
             self.file_button,
             Text("Number of visualizers"),
             self.visualizer_amount,
-            Text("Distance to last visualizer"),
+            Text("Distance to last visualizer (mm)"),
             self.detector_distance,
             Text("Resolution"),
             self.low_res,
-            Text("Visualizer Width"),
+            Text("Visualizer Width (mm)"),
             self.width
         ))
