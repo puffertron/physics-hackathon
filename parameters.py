@@ -13,7 +13,7 @@ class Parameters:
 
     occluder: Set[Vec2] = frozenset([Vec2(0, 0)])
 
-    visualizerAmount: int = 2
+    visualizerAmount: int = 1
 
     detectorDistance: float = 3
 
