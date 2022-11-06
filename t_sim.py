@@ -6,9 +6,6 @@ import set_up_state
 from typing import List, Dict
 from set_up_state import Visualizer
 
-####REMOVE LATER
-parameters.initParams()
-
 ##some settings
 
 
