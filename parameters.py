@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from typing import Set
 from PIL import Image
 
-from ursina import *
+Instance = None
 
 @dataclass
 class Parameters:
@@ -11,9 +10,8 @@ class Parameters:
     wavelength: float = 500
     brightnessFactor: float = 1
 
-    
     occluder: Image = Image.open("images/2slit.png")
-    
+
     visualizerAmount: int = 1
 
     detectorDistance: float = 3
@@ -21,7 +19,8 @@ class Parameters:
     lowResolution: int = 64  # For all planes in time simulation
     highResolution: int = 128  # For all planes in final state simulation
 
-    def initParams():
-        Instance = Parameters()
 
-Instance: Parameters = None
+def initParams():
+    global Instance
+    Instance = Parameters()
+
