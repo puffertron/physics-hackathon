@@ -20,9 +20,13 @@ def get_occlusion_holes(tex: Texture):
             if tex.get_pixel(x, y).brightness < 0.5:
                 #these pixels are holes
                 holes.append(Vec2(x,y))
-    
+
     return holes
 
 
 def find_nearest_2n(f: float):
     return math.pow(2, round(math.log2(f)))
+
+
+def pixel_width(vis_width: float, resolution: float):
+    return vis_width / resolution
