@@ -19,12 +19,14 @@ class VisualizerPixel:
         self.coordinates:Vec2 = coordinates
         self.contributions:List[Contribution] = []
         self.totalContribution:Vec2 = Vec2(0,0)
-            
+
         for hole in holes:
-            distance = calculations.distance(coordinates.x-hole.x,coordinates.y-hole.y,distz)
-            individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,param.wavelength)))
+            distance = calculations.distance(coordinates.x-hole.x,coordinates.y-hole.y,distz)*param.width/param.lowResolution
+
+            individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz*param.width/param.lowResolution,distance,param.wavelength)))
             self.contributions.append(individualContribution)
-    
+
+
 
 # class Visualizer: #THREADS!!!!
 #     def thread_pixels(self, x, holes, resolution, distz):
@@ -40,19 +42,19 @@ class VisualizerPixel:
 #         p.starmap_async(self.thread_pixels, zip(range(0,resolution), repeat(holes), repeat(resolution), repeat(distz)))
 #         p.close()
 #         p.join()
-        
+
 
 
 class Visualizer:
     def __init__(self, param:Parameters, distz:float, resolution:int, holes:List[Vec2]):
         self.distz:float = distz
         self.pixels:List[VisualizerPixel] = []
-        
+
         for x in range(resolution):
             print(f"Starting row {x} for Visualizer at dist {distz}")
             for y in range(resolution):
                 self.pixels.append(VisualizerPixel(param, Vec2(x,y), distz, holes))
-        
+
 
 def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
     visualizers:List[Visualizer] = []
@@ -68,7 +70,7 @@ def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
             cache = pickle.dump(visualizers, f)
             print("cache written")
             f.close()
-            
+
     else: #if yee cache
         #check for cache
         file = None
@@ -85,16 +87,16 @@ def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
 
     return visualizers
 
-    
-#Ciaran's added code to sort the values by d-step so that the actual simulation part can run faster, will take longer to set up though    
+
+#Ciaran's added code to sort the values by d-step so that the actual simulation part can run faster, will take longer to set up though
 def modifiedSetUpTimeState(param:Parameters) -> Tuple[List[List[Dict[Vec2,Vec2]]], List[Visualizer]]:
     '''returns a list where where each element represents one visualizer with a list of time steps, each time step is a dictionary where the keys are the coordinates to a point on the visualizer and the values are the contribution vectors to be added in that step. The second thing is the original big data structure'''
     maxNumberOfSteps:int = math.ceil(calculations.distance(param.lowResolution, param.lowResolution, param.detectorDistance) / param.tick_distance) #Max distance / distance per tick, rounded up
     planesToAddOverTime:List[List[Dict[Vec2,Vec2]]] = []*param.visualizerAmount # We have one big list for each visualizer
-    
+
     visualizers:List[Visualizer] = setUpTimeState(param)
     for visualizer in visualizers:
-        visualizerContributionPlane:List[Dict[Vec2,Vec2]] = [None]*maxNumberOfSteps #Each dict has space for a whole plane of points, and we have a dictionary for every step 
+        visualizerContributionPlane:List[Dict[Vec2,Vec2]] = [None]*maxNumberOfSteps #Each dict has space for a whole plane of points, and we have a dictionary for every step
         for pixel in visualizer.pixels:
             for contribution in pixel.contributions:
                 properTimeStep:int = math.ceil(contribution.dist / param.tick_distance) #Distance / distance per tick, rounded up
@@ -116,7 +118,7 @@ def modifiedSetUpTimeState(param:Parameters) -> Tuple[List[List[Dict[Vec2,Vec2]]
                  += contribution.vec - adds the value to the key if the value is already defined
                 """
         planesToAddOverTime.append(visualizerContributionPlane)
-    
+
     return planesToAddOverTime, visualizers, maxNumberOfSteps
 
 def setUpFinalDetectorState(param:Parameters) -> Visualizer:

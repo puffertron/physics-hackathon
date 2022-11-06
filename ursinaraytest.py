@@ -37,5 +37,6 @@ uv.texture.apply()
 
 
 ed = EditorCamera()
+ed.enabled=True
 
 app.run()
