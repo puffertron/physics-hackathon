@@ -1,6 +1,11 @@
 from ursina import *
+from ursina.prefabs.dropdown_menu import DropdownMenu, DropdownMenuButton
+
 from parameters_panel import ParametersPanel
 import parameters
+
+def doNothing():
+    pass
 
 app = Ursina(title="Wave Simulation")
 ed = EditorCamera
@@ -9,7 +14,7 @@ ed = EditorCamera
 if __name__ == "__main__":
 
     parameters.initParams()
-    paramPanel = ParametersPanel()
+    paramPanel = ParametersPanel(doNothing)
 
 
 
