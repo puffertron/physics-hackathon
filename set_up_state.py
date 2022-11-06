@@ -1,5 +1,6 @@
 import struct
-from parameters import Parameters, get_occlusion_holes
+from parameters import Parameters
+import utils
 from ursina import *
 from dataclasses import dataclass
 from typing import List
@@ -15,10 +16,10 @@ class VisualizerPixel:
     def __init__(self, param:Parameters, coordinates:Vec2, distz:float, highRes:bool):
         self.coordinates:Vec2 = coordinates
         self.contributions:List[Contribution] = []
-        self.total_contribution:Vec2 = Vec2(0,0)
+        self.totalContribution:Vec2 = Vec2(0,0)
         
         if highRes:
-            holes = get_occlusion_holes(param.occluder)
+            holes = utils.get_occlusion_holes(param.occluder)
         else:
             holes = []#TODO - kidaneFunction(param.occluder,param.lowResolution)
             

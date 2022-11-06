@@ -13,7 +13,7 @@ class Parameters:
 
     occluder: Image = Image.open("images/2slit.png")
 
-    visualizerAmount: int = 1
+    visualizerAmount: int = 3
 
     detectorDistance: float = 3
 
