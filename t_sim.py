@@ -3,7 +3,7 @@ from PIL import Image
 import utils 
 import parameters
 import set_up_state
-from typing import List
+from typing import List, Dict
 from set_up_state import Visualizer
 
 ####REMOVE LATER
@@ -27,7 +27,7 @@ class Simulation(Entity):
     def create_visualisers(self, visuals):
         l = []
         for i, v in enumerate(visuals, start=1):
-            spacing = 4/len(visuals)
+            spacing = 4/len(visuals) #TODO - The length is distorted from the value in parameters - not sure what a good fix is
 
             if i != len(visuals):
                 tex = Texture(Image.new(mode="RGBA", size=(parameters.Instance.lowResolution, parameters.Instance.lowResolution), color=(255,0,0,100)))
@@ -53,11 +53,20 @@ class Simulation(Entity):
     
     def begin(self):
         #get initialised planes
-        visualisers = set_up_state.setUpTimeState(parameters.Instance)
-        self.occluder = self.create_occluder(parameters.Instance.occluder)
-        self.visgroup += (self.create_visualisers(visualisers))
         
-        self.visualisers = visualisers
+        #From old slower way
+        #visualisers = set_up_state.setUpTimeState(parameters.Instance)
+        
+        #For newer faster way
+        #planesToAddOverTime:List[List[Dict[Vec2,Vec2]]], visualisers:List[Visualizer] = set_up_state.modifiedSetUpTimeState(parameters.Instance)
+        self.tempTuple = set_up_state.modifiedSetUpTimeState(parameters.Instance)
+        self.planesToAddOverTime:List[List[Dict[Vec2,Vec2]]] = self.tempTuple[0]
+        self.visualisers:List[Visualizer] = self.tempTuple[1]
+        
+        
+        self.occluder = self.create_occluder(parameters.Instance.occluder)
+        self.visgroup += (self.create_visualisers(self.visualisers))
+        
         print("begun")
 
 
@@ -68,9 +77,16 @@ class Simulation(Entity):
         print(f"update frame{self.currenttickdistance}")
         for i, visualizer in enumerate(self.visualisers):
             for visualizerPixel in visualizer.pixels:
-                for contribution in visualizerPixel.contributions:
-                    if (self.currenttickdistance-parameters.Instance.tick_distance) < contribution.dist and contribution.dist <= self.currenttickdistance:
-                        visualizerPixel.totalContribution += contribution.vec
+                
+                #Old slower code from older set up function
+                # for contribution in visualizerPixel.contributions:
+                #     if (self.currenttickdistance-parameters.Instance.tick_distance) < contribution.dist and contribution.dist <= self.currenttickdistance:
+                #         visualizerPixel.totalContribution += contribution.vec
+                
+                #Newer faster code for modified set up function
+                visualizerPixel.totalContribution += self.planesToAddOverTime[i][math.ceil(self.currenttickdistance / parameters.Instance.tick_distance)][visualizerPixel.coordinates]
+                '''TODO - document this code'''
+                
                 #color pixels
                 v = self.visgroup[i]
                 b = int(utils.length(visualizerPixel.totalContribution)*parameters.Instance.brightnessFactor)

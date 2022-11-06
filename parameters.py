@@ -6,16 +6,16 @@ Instance = None
 
 @dataclass
 class Parameters:
-    tick_distance: float = 1
+    tick_distance: float = 1 #This is also in pixels, in simulation it doesn't look like it because z is skewed (already a TODO elesewhere to fix it)
 
-    wavelength: float = 5
+    wavelength: float = 5 #Also in pixels haha, every length unit is in pixles
     brightnessFactor: float = 1000000000000 #Turn up to make brighter pixels, will probably need to be a few hundred or more to see anything
 
     occluder: Image = Image.open("images/2slit.png")
 
     visualizerAmount: int = 3
 
-    detectorDistance: float = 10
+    detectorDistance: float = 10 #In pixels currently, think of it proportional to the
 
     lowResolution: int = 64  # For all planes in time simulation
     highResolution: int = 128  # For all planes in final state simulation
