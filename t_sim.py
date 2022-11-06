@@ -38,15 +38,15 @@ render_visualisers(visualisers)
 
 #Logic for this code once it's cleaned up
 
-#in update function (to run every frame)
+#update every pixel of every visualizer to add any waves that have reached it
 def update(timeState:List[Visualizer], currentTickDistance:int):
     for visualizer in timeState:
         for visualizerPixel in visualizer.pixels:
             for contribution in visualizerPixel.contributions:
                 if (currentTickDistance-parameters.Instance.tick_distance) < contribution.dist and contribution.dist <= currentTickDistance:
                     visualizerPixel.totalContribution += contribution.vec
-
-#update every pixel of every visualizer to add any waves that have reached it
+                    
+    #Then just need to draw it on the screen now that the pixel values are updated
 
 
 #
