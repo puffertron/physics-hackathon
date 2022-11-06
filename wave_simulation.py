@@ -28,7 +28,7 @@ def simulate():
     parameters.Instance.printToConsole()
 
     sim = Simulation()
-    # sim = t_sim_threading.Simulation() DOES NOT WORK
+    #sim = t_sim_threading.Simulation() #DOES NOT WORK
     sim.begin()
 
     # After simulation has stopped, call gui.stet_stopped()
