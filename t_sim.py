@@ -90,6 +90,7 @@ class Simulation(Entity):
     #update every pixel of every visualizer to add any waves that have reached it
     def update(self):
         if math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) <= self.lastTick:
+            #t = time.perf_counter()
             print(f"update frame {self.currentTick} of {self.lastTick}")
             for i, visualizer in enumerate(self.visualisers):
                 currentVisualizerPlaneToAdd = self.planesToAddOverTime[i] #Putting this here so it doesn't have to do an extra accessing element on a list every time
@@ -119,6 +120,7 @@ class Simulation(Entity):
             
             self.currentTick += 1
             self.currentTickDistance += parameters.Instance.tick_distance
+            #print(time.perf_counter()-t)
                         
         #Then just need to draw it on the screen now that the pixel values are updated
 
