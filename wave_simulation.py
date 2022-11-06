@@ -1,6 +1,6 @@
 import dataclasses
 
-from ursina import Ursina, destroy, Vec3, camera, window
+from ursina import *
 
 import parameters
 from parameters_panel import MainGui
@@ -39,18 +39,15 @@ def stop_simulation():
     if sim is None:
         print("WARNING: Tried to stop the simulation when it was not running")
         return
-
     sim.disable()
-    sim.visible = False
-    destroy(sim)
-    sim.disable()
-    sim.visible = False
-    sim = None
+    destroy(sim, 2)
+    
 
 
 if __name__ == "__main__":
     parameters.initParams()
     gui = MainGui(simulate, stop_simulation)
+    gui.eternal = True
 
     cam = camera
     cam.position = Vec3(7, 7, -7)
