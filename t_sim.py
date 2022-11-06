@@ -53,9 +53,9 @@ class Simulation(Entity):
     
     def begin(self):
         #get initialised planes
-        visualisers = set_up_state.setUpTimeState(parameters.Instance, cache=1, usecache=0)
+        self.visualisers = set_up_state.setUpTimeState(parameters.Instance, cache=1, usecache=0)
         self.occluder = self.create_occluder(parameters.Instance.occluder)
-        self.visgroup += (self.create_visualisers(visualisers))
+        self.visgroup += (self.create_visualisers(self.visualisers))
 
         #DEBUG UV SQUARE
         res = parameters.Instance.lowResolution
@@ -70,7 +70,7 @@ class Simulation(Entity):
 
         
         #From old slower way
-        self.visualisers = set_up_state.setUpTimeState(parameters.Instance)
+        #self.visualisers = set_up_state.setUpTimeState(parameters.Instance)
         
         #For newer faster way
         # self.tempTuple = set_up_state.modifiedSetUpTimeState(parameters.Instance)
@@ -107,7 +107,7 @@ class Simulation(Entity):
                 
                 #color pixels
                 v = self.visgroup[i]
-                b = int(utils.length(visualizerPixel.totalContribution)*parameters.Instance.brightnessFactor)
+                b = min(int(utils.length(visualizerPixel.totalContribution)*parameters.Instance.brightnessFactor), 255)
                 v.texture.set_pixel(int(visualizerPixel.coordinates.x),
                                     int(visualizerPixel.coordinates.y), rgb(b, b, b))
                 v.texture.apply()

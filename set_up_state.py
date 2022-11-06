@@ -50,8 +50,7 @@ def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
             cache = pickle.dump(visualizers, f)
             print("cache written")
             f.close()
-    
-
+            
     else: #if yee cache
         #check for cache
         file = None
