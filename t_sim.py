@@ -2,6 +2,8 @@ from ursina import *
 from PIL import Image
 import utils 
 import parameters
+from typing import List
+from set_up_state import Visualizer
 
 def init_planes():
     pass
@@ -34,3 +36,17 @@ render_visualisers(visualisers)
 
 
 
+#Logic for this code once it's cleaned up
+
+#in update function (to run every frame)
+def update(timeState:List[Visualizer], currentTickDistance:int):
+    for visualizer in timeState:
+        for visualizerPixel in visualizer.pixels:
+            for contribution in visualizerPixel.contributions:
+                if (currentTickDistance-parameters.Instance.tick_distance) < contribution.dist and contribution.dist <= currentTickDistance:
+                    visualizerPixel.totalContribution += contribution.vec
+
+#update every pixel of every visualizer to add any waves that have reached it
+
+
+#
