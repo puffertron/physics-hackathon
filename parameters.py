@@ -23,6 +23,7 @@ class Parameters:
     highResolution: int = 64  # For all planes in final state simulation
 
 
+
     def printToConsole(self):
 
         print()

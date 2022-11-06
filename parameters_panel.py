@@ -126,8 +126,8 @@ class ParametersPanel(WindowPanel):
 
         self.file_warning = Text("A slit mask must be chosen before simulation", color=color.red, visible=False)
 
-        self.wavelength = ThinSlider(min=100, max=1, step=0.00001, default=0.001) #  nm
-        self.brightness = ThinSlider(min=1000, max=5000, step=10, default=500)
+        self.wavelength = ThinSlider(min=1, max=100, step=0.00001, default=0.001) #  nm
+        self.brightness = ThinSlider(min=1, max=1000, step=10, default=1)
         self.tick = ThinSlider(min=50, max=1000, step=1, default=0.001)
 
         self.file_button = Button(make_file_button_text(None))
