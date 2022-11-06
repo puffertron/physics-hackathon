@@ -20,6 +20,7 @@ class Simulation(Entity):
     def create_occluder(self,tex):
         #occluder params texture is an IMAGE instance not TEXTURE
         occluder = Entity(model='plane', texture=Texture(tex), position=Vec3(0,self.zoffset,0))
+        occluder.parent = self
         return occluder
 
     def create_visualisers(self, visuals):
@@ -34,6 +35,8 @@ class Simulation(Entity):
             else: #special case for final visualiser AKA detector
                 tex = Texture(Image.new(mode="RGBA", size=(parameters.Instance.lowResolution, parameters.Instance.lowResolution), color=(0,0,0,255)))
                 plane = Entity(model='plane', texture=tex, position=(0,self.zoffset-i*spacing,0))
+
+            plane.parent = self
 
             l.append(plane)
         return l

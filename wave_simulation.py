@@ -33,7 +33,6 @@ def simulate():
 
     # After simulation has stopped, call gui.stet_stopped()
 
-
 def stop_simulation():
     global sim
 
