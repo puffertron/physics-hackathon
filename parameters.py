@@ -38,6 +38,18 @@ class Parameters:
         print()
 
 
+def copy(p: Parameters) -> Parameters:
+    return Parameters(
+        tick_distance=p.tick_distance,
+        wavelength=p.wavelength,
+        brightnessFactor=p.brightnessFactor,
+        occluder=p.occluder.copy(),
+        visualizerAmount=p.visualizerAmount,
+        detectorDistance=p.detectorDistance,
+        lowResolution=p.lowResolution
+    )
+
+
 def initParams():
     global SoftInstance, Instance
 
