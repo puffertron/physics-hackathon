@@ -21,7 +21,7 @@ class Parameters:
     
     highResolution: int = 64  # For all planes in final state simulation
 
-    width: int= 32 #width
+    width: float = 32
     
 
     def printToConsole(self):
