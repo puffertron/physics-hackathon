@@ -85,7 +85,11 @@ class Simulation(Entity):
                 
                 #Newer faster code for modified set up function
                 visualizerPixel.totalContribution += self.planesToAddOverTime[i][math.ceil(self.currenttickdistance / parameters.Instance.tick_distance)][visualizerPixel.coordinates]
-                '''TODO - document this code'''
+                '''
+                [i] - acesses the visualizer
+                [math.ceil(self.currenttickdistance / parameters.Instance.tick_distance)] - acesses the dictionary for the given distance step
+                [visualizerPixel.coordinates] - acesses the key that is the position vector of the pixel on the visualizer (the value is the contribution to add for that frame)
+                '''
                 
                 #color pixels
                 v = self.visgroup[i]
