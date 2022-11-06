@@ -2,7 +2,7 @@ from ursina import *
 
 from parameters_panel import ParametersPanel
 import parameters
-import t_sim
+import t_sim, t_sim_threading
 
 app = Ursina(title="Wave Simulation")
 
@@ -23,6 +23,7 @@ if __name__ == "__main__":
     cam.rotation_z = 0
 
     sim = t_sim.Simulation()
+    #sim = t_sim_threading.Simulation() DOES NOT WORK
     sim.begin() #get the visualisers
 
     app.run()

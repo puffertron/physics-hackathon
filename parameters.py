@@ -11,7 +11,7 @@ class Parameters:
     wavelength: float = 5 #Also in pixels haha, every length unit is in pixles
     brightnessFactor: float = 10#Turn up to make brighter pixels, will probably need to be a few hundred or more to see anything
 
-    occluder: Image = Image.open("images/bright.png")
+    occluder: Image = Image.open("images/2slit.png")
 
     visualizerAmount: int = 4
 

@@ -1,5 +1,6 @@
 import struct
 from parameters import Parameters
+import parameters
 import utils
 from ursina import *
 from dataclasses import dataclass
@@ -7,6 +8,8 @@ from typing import List, Dict, Tuple
 import calculations
 import pickle
 import math
+import multiprocessing.dummy as mp
+from itertools import product, repeat
 
 
 @dataclass
@@ -14,12 +17,33 @@ class Contribution:
     dist: float
     vec: Vec2
 
+# class VisualizerPixel:  #THREADED
+#     def thread_holes(self, hole, coordinates, distz):
+#         distance = calculations.distance(coordinates.x-hole.x,coordinates.y-hole.y,distz)
+#         individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,parameters.Instance.wavelength)))
+#         self.contributions.append(individualContribution)
+
+#     def __init__(self, param:Parameters, coordinates:Vec2, distz:float, holes:List[Vec2]):
+#         self.coordinates:Vec2 = coordinates
+#         self.contributions:List[Contribution] = []
+#         self.totalContribution:Vec2 = Vec2(0,0)
+        
+#         p=mp.Pool(2)
+#         p.starmap(self.thread_holes, zip(holes, repeat(coordinates), repeat(distz)))
+#         p.close()
+#         p.join()
+
+#         # for hole in holes:
+#         #     distance = calculations.distance(coordinates.x-hole.x,coordinates.y-hole.y,distz)
+#         #     individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,param.wavelength)))
+#         #     self.contributions.append(individualContribution)
+
 class VisualizerPixel:
     def __init__(self, param:Parameters, coordinates:Vec2, distz:float, holes:List[Vec2]):
         self.coordinates:Vec2 = coordinates
         self.contributions:List[Contribution] = []
-        self.totalContribution:Vec2 = Vec2(0,0)
-            
+        self.totalContribution:Vec2 = Vec2(0,0)     
+
         for hole in holes:
             distance = calculations.distance(coordinates.x-hole.x,coordinates.y-hole.y,distz)
             individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,param.wavelength)))
@@ -50,7 +74,7 @@ def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
             cache = pickle.dump(visualizers, f)
             print("cache written")
             f.close()
-            
+
     else: #if yee cache
         #check for cache
         file = None
