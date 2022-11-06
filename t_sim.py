@@ -5,19 +5,9 @@ from parameters import Parameters
 import set_up_stateplanes
 
 
-def get_occlusiion_holes(tex: Texture):
-    holes = []
-    for x in range(0, tex.width):
-        for y in range(0, tex.height):
-            print (tex.get_pixel(x,y).brightness)
-            if tex.get_pixel(x, y).brightness < 0.5:
-                #these pixels are holes
-                holes.append(Vec2(x,y))
-    
-    return holes
 
-def render_occulder(tex):
-    occulder = Entity(mplanesodel='plane', texture=tex, position=Vec3(0,3,0))
+def render_occluder(tex):
+    occluder = Entity(mplanesodel='plane', texture=tex, position=Vec3(0,3,0))
 
 def render_visualisers(visuals):
     for i, v in enumerate(visuals, start=1):

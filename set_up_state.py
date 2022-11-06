@@ -1,5 +1,5 @@
 import struct
-from parameters import Parameters
+from parameters import Parameters, get_occlusion_holes
 from ursina import *
 from dataclasses import dataclass
 from typing import List
@@ -18,11 +18,11 @@ class VisualizerPixel:
         self.total_contribution:Vec2 = Vec2(0,0)
         
         if highRes:
-            holes = param.occluder
+            holes = get_occlusion_holes(param.occluder)
         else:
             holes = []#TODO - kidaneFunction(param.occluder,param.lowResolution)
             
-        for hole in holes: #TODO make it use the proper occluder from the instance of parameters
+        for hole in holes:
             distance = calculations.distance(coordinates.x,coordinates.y,distz)
             individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,param.wavelength)))
             self.contributions.append(individualContribution)
@@ -40,10 +40,9 @@ class Visualizer:
 def setUpTimeState(param:Parameters) -> List[Visualizer]:
     visualizers:List[Visualizer] = []
     for i in range(param.visualizerAmount):
-        visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * i, param.lowResolution, False)) #TODO replace resoliution with lowresolution
+        visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * i, param.lowResolution, False))
     return visualizers
     
-    #param.detectorDistance/param.visualizerAmount * self.index
 
 def setUpFinalDetectorState(param:Parameters) -> Visualizer:
     return Visualizer(param, param.detectorDistance, param.highResolution, True)
