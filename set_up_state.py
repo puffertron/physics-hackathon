@@ -13,7 +13,7 @@ class Contribution:
     vec: Vec2
 
 class VisualizerPixel:
-    def __init__(self, param:Parameters, coordinates:Vec2, distz:float, highRes:bool):
+    def __init__(self, param:Parameters, coordinates:Vec2, distz:float, highRes:bool, holes:List[Vec2]):
         self.coordinates:Vec2 = coordinates
         self.contributions:List[Contribution] = []
         self.totalContribution:Vec2 = Vec2(0,0)
@@ -29,19 +29,19 @@ class VisualizerPixel:
             self.contributions.append(individualContribution)
     
 class Visualizer:
-    def __init__(self, param:Parameters, distz:float, resolution:int, highRes:bool):
+    def __init__(self, param:Parameters, distz:float, resolution:int, highRes:bool, holes:List[Vec2]):
         self.distz:float = distz
         self.pixels:List[VisualizerPixel] = []
         
         for x in range(resolution):
             for y in range(resolution):
-                self.pixels.append(VisualizerPixel(param, Vec2(x,y), distz, highRes))
+                self.pixels.append(VisualizerPixel(param, Vec2(x,y), distz, highRes, holes))
         
 
 def setUpTimeState(param:Parameters) -> List[Visualizer]:
     visualizers:List[Visualizer] = []
     for i in range(param.visualizerAmount):
-        visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * (i+1), param.lowResolution, False))
+        visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * (i+1), param.lowResolution, False, ))
     return visualizers
     
 
