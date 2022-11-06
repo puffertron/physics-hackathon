@@ -33,6 +33,41 @@ def updateResolution(slider: Slider) -> float:
     return slider.value
 
 
+class MainGui:
+
+    def set_stopped(self):
+        self.parameters.enable = True
+        self.parameters.visible = True
+        self.start_stop.value = "stop"
+
+    def __change_sim_state(self):
+        print("Trying to change state")
+        value: str = self.start_stop.value
+        if value == "start":
+            self.parameters.enable = False
+            self.parameters.visible = False
+
+            self.start_sim()
+        elif value == "stop":
+            self.parameters.enable = True
+            self.parameters.visible = True
+            self.stop_sim()
+        else:
+            raise AssertionError(f"Start/Stop button group should have value of start or stop, has {value}")
+
+    def __init__(self, start_sim: Callable, stop_sim: Callable):
+
+        self.parameters = ParametersPanel()
+
+        self.start_sim = start_sim
+        self.stop_sim = stop_sim
+
+        self.start_stop = ButtonGroup(("start", "stop"), default="stop", position=(.5, .5))
+        self.start_stop.on_value_changed = lambda: self.__change_sim_state()
+
+
+
+
 class ParametersPanel(WindowPanel):
     def show_file_selector(self):
         self.file_browser.enabled = True
@@ -60,18 +95,10 @@ class ParametersPanel(WindowPanel):
     def update_high_res(self):
         set_param("highResolution", updateResolution(self.high_res))
 
-    def on_simulate(self):
-        get_params().printToConsole()
-        self.simulate_func()
-
-    def __init__(self, simulate_func: Callable):
+    def __init__(self):
         """
         simulateFunction: function that will be called when the simulate button is called
         """
-
-        self.simulate_func = simulate_func
-
-        # UI elements:
 
         self.wavelength = ThinSlider(min=200, max=1000, default=500)
         self.wavelength.on_value_changed = lambda: set_param("wavelength", self.wavelength.value)
@@ -104,13 +131,10 @@ class ParametersPanel(WindowPanel):
         self.detector_distance.on_value_changed = lambda: set_param("detectorDistance", self.detector_distance.value)
 
         self.low_res = ThinSlider(min=16, max=128, step=16, default=16)
-        self.low_res.on_value_changed = lambda: self.update_low_res()
+        self.low_res.on_value_changed = self.update_low_res
 
         self.high_res = ThinSlider(min=32, max=516, step=32, default=32)
-        self.high_res.on_value_changed = lambda: self.update_high_res()
-
-        self.simulate = Button(text="Run Simulation")
-        self.simulate.on_click = self.on_simulate
+        self.high_res.on_value_changed = self.update_high_res
 
         super().__init__(title="Simulation Parameters", position=(-.5, .25), content=(
             Text("Wavelength"),
@@ -127,6 +151,5 @@ class ParametersPanel(WindowPanel):
             Text("Low resolution"),
             self.low_res,
             Text("High resolution (Last visualizer)"),
-            self.high_res,
-            self.simulate
+            self.high_res
         ))

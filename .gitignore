@@ -810,3 +810,7 @@ FodyWeavers.xsd
 /.idea/physics-hackathon.iml
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vcs.xml
+
+
+# Cache
+*.pkl
