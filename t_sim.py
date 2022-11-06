@@ -56,15 +56,15 @@ class Simulation(Entity):
         #self.visgroup += (self.create_visualisers(self.visualisers))
 
         #DEBUG UV SQUARE
-        res = parameters.Instance.lowResolution
-        uvtex = Texture(Image.new(mode="RGBA", size=(res,res), color=(255,0,0,255)))
-        uvtex.default_filtering = None
-        uv = Entity(model='plane', texture=uvtex, position=(0,-3,0)) # set a PIL texture
-        for x in range (0, uv.texture.width):
-            for y in range (0, uv.texture.height):
-                uv.texture.set_pixel(x, y, rgb(x*255/res, y*255/res,0))
+        #res = parameters.Instance.lowResolution
+        #uvtex = Texture(Image.new(mode="RGBA", size=(res,res), color=(255,0,0,255)))
+        #uvtex.default_filtering = None
+        #uv = Entity(model='plane', texture=uvtex, position=(0,-3,0)) # set a PIL texture
+        #for x in range (0, uv.texture.width):
+        #    for y in range (0, uv.texture.height):
+        #        uv.texture.set_pixel(x, y, rgb(x*255/res, y*255/res,0))
 
-        uv.texture.apply()
+        #uv.texture.apply()
 
         
         #From old slower way
