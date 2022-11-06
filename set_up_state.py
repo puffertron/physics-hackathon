@@ -3,9 +3,10 @@ from parameters import Parameters
 import utils
 from ursina import *
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict, Tuple
 import calculations
 import pickle
+import math
 
 
 @dataclass
@@ -65,7 +66,35 @@ def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
             print("cache got")
 
     return visualizers
+
     
+#Ciaran's added code to sort the values by d-step so that the actual simulation part can run faster, will take longer to set up though    
+def modifiedSetUpTimeState(param:Parameters) -> Tuple[List[List[Dict[Vec2,Vec2]]], List[Visualizer]]:
+    '''returns a list where where each element represents one visualizer with a list of time steps, each time step is a dictionary where the keys are the coordinates to a point on the visualizer and the values are the contribution vectors to be added in that step. The second thing is the original big data structure'''
+    maxNumberOfSteps:int = math.ceil(calculations.distance(param.lowResolution, param.lowResolution, param.detectorDistance) / param.tick_distance) #Max distance / distance per tick, rounded up
+    planesToAddOverTime:List[List[Dict[Vec2,Vec2]]] = []*param.visualizerAmount # We have one big list for each visualizer
+    
+    visualizers:List[Visualizer] = setUpTimeState(param)
+    for visualizer in visualizers:
+        visualizerContributionPlane:List[Dict[Vec2,Vec2]] = []*maxNumberOfSteps #Each dict has space for a whole plane of points, and we have a dictionary for every step 
+        for pixel in visualizer.pixels:
+            for contribution in pixel.contributions:
+                properTimeStep:int = math.ceil(contribution.dist / param.tick_distance) #Distance / distance per tick, rounded up
+                #the contribution should be added to the plane corresponding to the above time step
+                if (visualizerContributionPlane[properTimeStep-1]).get[pixel.coordinates] == None:
+                    (visualizerContributionPlane[properTimeStep-1])[pixel.coordinates] = contribution.vec
+                else:
+                    (visualizerContributionPlane[properTimeStep-1])[pixel.coordinates] += contribution.vec
+                """
+                (planesToAddOverTime[properTimeStep-1]) - acesses an element in the list which is a dictionary - darn zero indexing making it confusing
+                [pixel.coordinates] - access that dictionary at key of vector being the coordinates
+                
+                 = contribution.vec - sets the value at this key to the contribution if it isn't defined yet
+                 += contribution.vec - adds the value to the key if the value is already defined
+                """
+        planesToAddOverTime.append(visualizerContributionPlane)
+    
+    return planesToAddOverTime, visualizers
 
 def setUpFinalDetectorState(param:Parameters) -> Visualizer:
     return Visualizer(param, param.detectorDistance, param.highResolution, utils.get_occlusion_holes(Texture(param.occluder))) #Uses High Res Holes

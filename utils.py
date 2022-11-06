@@ -22,3 +22,7 @@ def get_occlusion_holes(tex: Texture):
                 holes.append(Vec2(x,y))
     
     return holes
+
+
+def find_nearest_2n(f: float):
+    return math.pow(2, round(math.log2(f)))
