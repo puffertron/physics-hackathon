@@ -40,6 +40,7 @@ def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
     visualizers:List[Visualizer] = []
     if usecache == 0: #if no use cache
         lowResHoles:List[Vec2] = utils.get_occlusion_holes(Texture(utils.resize_image(param.occluder,param.lowResolution))) #Uses low res occluder
+        
         for i in range(param.visualizerAmount):
             visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * (i+1), param.lowResolution, lowResHoles))
 
@@ -49,8 +50,7 @@ def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
             cache = pickle.dump(visualizers, f)
             print("cache written")
             f.close()
-    
-
+            
     else: #if yee cache
         #check for cache
         file = None
