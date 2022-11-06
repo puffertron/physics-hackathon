@@ -3,6 +3,8 @@ from PIL import Image
 import utils 
 import parameters
 import set_up_state
+from typing import List
+from set_up_state import Visualizer
 
 ####REMOVE LATER
 parameters.initParams()
@@ -32,8 +34,6 @@ def create_visualisers(visuals):
         l.append(plane)
     return l
 
-def update():
-    pass
 
 app = Ursina(title="Wave Simulation")
 ed = EditorCamera()
@@ -48,4 +48,18 @@ v = create_visualisers(visualisers)
 ##DEBUGG
 print("DEBUG:")
 
-app.run()
+#app.run()
+#Logic for this code once it's cleaned up
+
+#update every pixel of every visualizer to add any waves that have reached it
+def update(timeState:List[Visualizer], currentTickDistance:int):
+    for visualizer in timeState:
+        for visualizerPixel in visualizer.pixels:
+            for contribution in visualizerPixel.contributions:
+                if (currentTickDistance-parameters.Instance.tick_distance) < contribution.dist and contribution.dist <= currentTickDistance:
+                    visualizerPixel.totalContribution += contribution.vec
+                    
+    #Then just need to draw it on the screen now that the pixel values are updated
+
+
+#
