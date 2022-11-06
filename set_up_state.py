@@ -19,9 +19,9 @@ class VisualizerPixel:
         self.totalContribution:Vec2 = Vec2(0,0)
         
         if highRes:
-            holes = utils.get_occlusion_holes(param.occluder)
+            holes = utils.get_occlusion_holes(Texture(param.occluder))
         else:
-            holes = []#TODO - kidaneFunction(param.occluder,param.lowResolution)
+            holes = utils.get_occlusion_holes(Texture(utils.resize_image(param.occluder,param.lowResolution)))
             
         for hole in holes:
             distance = calculations.distance(coordinates.x,coordinates.y,distz)

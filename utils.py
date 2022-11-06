@@ -3,9 +3,13 @@ import parameters
 from PIL import Image
 
 
-def resize_image(img: Image, x, y):
-    img = img.resize((x,y), resample=0)
+def resize_image(img: Image, size):
+    img = img.resize((size,size), resample=0)
     return img
+
+def length(vec: Vec2):
+    l = sqrt(vec.x**2+vec.y**2)
+    return l
 
 
 def get_occlusion_holes(tex: Texture):
