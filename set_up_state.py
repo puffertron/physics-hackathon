@@ -17,8 +17,9 @@ class VisualizerPixel:
         self.contributions:List[Contribution] = []
         self.total_contribution:Vec2 = Vec2(0,0)
         
-        for i in param.occluder: #TODO make it use the proper occluder from the instance of parameters
-            individualContribution:Contribution = Contribution(calculations.distance(coordinates.x,coordinates.y,distz),Vec2(1,1)) #TODO use Miles functions
+        for hole in param.occluder: #TODO make it use the proper occluder from the instance of parameters
+            distance = calculations.distance(coordinates.x,coordinates.y,distz)
+            individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,param.wavelength)))
             self.contributions.append(individualContribution)
     
 class Visualizer:
