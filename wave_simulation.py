@@ -3,6 +3,7 @@ from ursina import *
 from parameters_panel import ParametersPanel
 import parameters
 from t_sim import Simulation
+import t_sim_threading
 
 app = Ursina(title="Wave Simulation")
 sim: Simulation = None
@@ -20,6 +21,7 @@ def simulate():
     parameters.Instance.printToConsole()
 
     sim = Simulation()
+    # sim = t_sim_threading.Simulation() DOES NOT WORK
     sim.begin()
 
 
