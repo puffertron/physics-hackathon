@@ -1,11 +1,18 @@
-from ursina import *
+from copy import deepcopy
 
-from parameters_panel import ParametersPanel
+from ursina import Ursina, destroy, Vec3, camera, window
+
+from parameters_panel import ParametersPanel, MainGui
 import parameters
 from t_sim import Simulation
 import t_sim_threading
 
 app = Ursina(title="Wave Simulation")
+window.fps_counter.enabled = False
+window.cog_button.enabled = False
+
+gui: MainGui = None
+
 sim: Simulation = None
 
 
@@ -24,16 +31,18 @@ def simulate():
     # sim = t_sim_threading.Simulation() DOES NOT WORK
     sim.begin()
 
+    # After simulation has stopped, call gui.stet_stopped()
+
 
 def stop_simulation():
-    sim.disable()  # TODO: seems to do nothing if the sim is running
+    sim.enable = False  # TODO: seems to do nothing if the sim is running
     destroy(sim)
     pass
 
 
 if __name__ == "__main__":
     parameters.initParams()
-    paramPanel = ParametersPanel(simulate, stop_simulation)
+    gui = MainGui(simulate, stop_simulation)
 
     cam = camera
     cam.position = Vec3(7, 7, -7)
