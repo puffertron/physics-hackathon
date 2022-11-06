@@ -81,7 +81,6 @@ class Simulation(Entity):
         
         print("begun")
 
-
     #Logic for this code once it's cleaned up
 
     #update every pixel of every visualizer to add any waves that have reached it
