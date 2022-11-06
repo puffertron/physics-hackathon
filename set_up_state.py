@@ -1,6 +1,5 @@
 import struct
 from parameters import Parameters
-import parameters
 import utils
 from ursina import *
 from dataclasses import dataclass
@@ -8,8 +7,6 @@ from typing import List, Dict, Tuple
 import calculations
 import pickle
 import math
-import multiprocessing.dummy as mp
-from itertools import product, repeat
 
 
 @dataclass
@@ -17,38 +14,35 @@ class Contribution:
     dist: float
     vec: Vec2
 
-# class VisualizerPixel:  #THREADED
-#     def thread_holes(self, hole, coordinates, distz):
-#         distance = calculations.distance(coordinates.x-hole.x,coordinates.y-hole.y,distz)
-#         individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,parameters.Instance.wavelength)))
-#         self.contributions.append(individualContribution)
-
-#     def __init__(self, param:Parameters, coordinates:Vec2, distz:float, holes:List[Vec2]):
-#         self.coordinates:Vec2 = coordinates
-#         self.contributions:List[Contribution] = []
-#         self.totalContribution:Vec2 = Vec2(0,0)
-        
-#         p=mp.Pool(2)
-#         p.starmap(self.thread_holes, zip(holes, repeat(coordinates), repeat(distz)))
-#         p.close()
-#         p.join()
-
-#         # for hole in holes:
-#         #     distance = calculations.distance(coordinates.x-hole.x,coordinates.y-hole.y,distz)
-#         #     individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,param.wavelength)))
-#         #     self.contributions.append(individualContribution)
-
 class VisualizerPixel:
     def __init__(self, param:Parameters, coordinates:Vec2, distz:float, holes:List[Vec2]):
         self.coordinates:Vec2 = coordinates
         self.contributions:List[Contribution] = []
-        self.totalContribution:Vec2 = Vec2(0,0)     
-
+        self.totalContribution:Vec2 = Vec2(0,0)
+            
         for hole in holes:
             distance = calculations.distance(coordinates.x-hole.x,coordinates.y-hole.y,distz)
             individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,param.wavelength)))
             self.contributions.append(individualContribution)
     
+
+# class Visualizer: #THREADS!!!!
+#     def thread_pixels(self, x, holes, resolution, distz):
+#         print(f"Starting row {x} for Visualizer at dist {distz}")
+#         for y in range(resolution):
+#             self.pixels.append(VisualizerPixel(parameters.Instance, Vec2(x,y), distz, holes)) 
+
+#     def __init__(self, param:Parameters, distz:float, resolution:int, holes:List[Vec2]):
+#         self.distz:float = distz
+#         self.pixels:List[VisualizerPixel] = []
+
+#         p=mp.Pool(4)
+#         p.starmap_async(self.thread_pixels, zip(range(0,resolution), repeat(holes), repeat(resolution), repeat(distz)))
+#         p.close()
+#         p.join()
+        
+
+
 class Visualizer:
     def __init__(self, param:Parameters, distz:float, resolution:int, holes:List[Vec2]):
         self.distz:float = distz
@@ -74,7 +68,7 @@ def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
             cache = pickle.dump(visualizers, f)
             print("cache written")
             f.close()
-
+            
     else: #if yee cache
         #check for cache
         file = None
@@ -100,15 +94,20 @@ def modifiedSetUpTimeState(param:Parameters) -> Tuple[List[List[Dict[Vec2,Vec2]]
     
     visualizers:List[Visualizer] = setUpTimeState(param)
     for visualizer in visualizers:
-        visualizerContributionPlane:List[Dict[Vec2,Vec2]] = []*maxNumberOfSteps #Each dict has space for a whole plane of points, and we have a dictionary for every step 
+        visualizerContributionPlane:List[Dict[Vec2,Vec2]] = [None]*maxNumberOfSteps #Each dict has space for a whole plane of points, and we have a dictionary for every step 
         for pixel in visualizer.pixels:
             for contribution in pixel.contributions:
                 properTimeStep:int = math.ceil(contribution.dist / param.tick_distance) #Distance / distance per tick, rounded up
                 #the contribution should be added to the plane corresponding to the above time step
-                if (visualizerContributionPlane[properTimeStep-1]).get[pixel.coordinates] == None:
+                if (visualizerContributionPlane[properTimeStep-1] is None):
+                    visualizerContributionPlane[properTimeStep-1] = dict()
                     (visualizerContributionPlane[properTimeStep-1])[pixel.coordinates] = contribution.vec
+                elif pixel.coordinates in visualizerContributionPlane[properTimeStep-1]:
+                    (visualizerContributionPlane[properTimeStep-1])[pixel.coordinates].x += contribution.vec.x
+                    (visualizerContributionPlane[properTimeStep-1])[pixel.coordinates].y += contribution.vec.y
                 else:
-                    (visualizerContributionPlane[properTimeStep-1])[pixel.coordinates] += contribution.vec
+                    (visualizerContributionPlane[properTimeStep-1])[pixel.coordinates] = contribution.vec
+
                 """
                 (planesToAddOverTime[properTimeStep-1]) - acesses an element in the list which is a dictionary - darn zero indexing making it confusing
                 [pixel.coordinates] - access that dictionary at key of vector being the coordinates
@@ -118,7 +117,7 @@ def modifiedSetUpTimeState(param:Parameters) -> Tuple[List[List[Dict[Vec2,Vec2]]
                 """
         planesToAddOverTime.append(visualizerContributionPlane)
     
-    return planesToAddOverTime, visualizers
+    return planesToAddOverTime, visualizers, maxNumberOfSteps
 
 def setUpFinalDetectorState(param:Parameters) -> Visualizer:
     return Visualizer(param, param.detectorDistance, param.highResolution, utils.get_occlusion_holes(Texture(param.occluder))) #Uses High Res Holes

@@ -6,6 +6,7 @@ import set_up_state
 from typing import List, Dict
 from set_up_state import Visualizer
 import multiprocessing.dummy as mp 
+from itertools import product, repeat
 
 
 ##some settings
@@ -85,13 +86,13 @@ class Simulation(Entity):
 
     #Logic for this code once it's cleaned up
 
-    def do_pixel(self, v, pixel):
+    def do_pixel(self, i, pixel):
         for contribution in pixel.contributions:
             if (self.currenttickdistance-parameters.Instance.tick_distance) < contribution.dist and contribution.dist <= self.currenttickdistance:
                 pixel.totalContribution += contribution.vec
                 
         #color pixels
-        v = self.visgroup[index(v)]
+        v = self.visgroup[i]
         b = min(int(utils.length(pixel.totalContribution)*parameters.Instance.brightnessFactor), 255)
         v.texture.set_pixel(int(pixel.coordinates.x),
                             int(pixel.coordinates.y), rgb(b, b, b))
@@ -102,7 +103,7 @@ class Simulation(Entity):
         print(f"update frame{self.currenttickdistance}")
         for i, visualizer in enumerate(self.visualisers):
             p = mp.Pool(4)
-            p.map(self.do_pixel, zip(visualizer, visualizer.pixels))
+            p.starmap(self.do_pixel, zip(repeat(i), visualizer.pixels))
             p.close()
             p.join()
             # for visualizerPixel in visualizer.pixels:
@@ -114,12 +115,7 @@ class Simulation(Entity):
                 
                 #Newer faster code for modified set up function
                 # visualizerPixel.totalContribution += self.planesToAddOverTime[i][math.ceil(self.currenttickdistance / parameters.Instance.tick_distance)][visualizerPixel.coordinates]
-            '''
-            [i] - acesses the visualizer
-            [math.ceil(self.currenttickdistance / parameters.Instance.tick_distance)] - acesses the dictionary for the given distance step
-            [visualizerPixel.coordinates] - acesses the key that is the position vector of the pixel on the visualizer (the value is the contribution to add for that frame)
-            '''
-                
+
                 # #color pixels
                 # v = self.visgroup[i]
                 # b = min(int(utils.length(visualizerPixel.totalContribution)*parameters.Instance.brightnessFactor), 255)

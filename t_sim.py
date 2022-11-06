@@ -12,7 +12,8 @@ from set_up_state import Visualizer
 class Simulation(Entity):
     def __init__(self):
         super().__init__()
-        self.currenttickdistance = 0
+        self.currentTick = 0
+        self.currentTickDistance = 0
         self.zoffset = 2
         self.visualisers = []
 
@@ -50,9 +51,9 @@ class Simulation(Entity):
     
     def begin(self):
         #get initialised planes
-        self.visualisers = set_up_state.setUpTimeState(parameters.Instance, cache=1, usecache=0)
-        self.occluder = self.create_occluder(parameters.Instance.occluder)
-        self.visgroup += (self.create_visualisers(self.visualisers))
+        #self.visualisers = set_up_state.setUpTimeState(parameters.Instance, cache=1, usecache=0)
+        #self.occluder = self.create_occluder(parameters.Instance.occluder)
+        #self.visgroup += (self.create_visualisers(self.visualisers))
 
         #DEBUG UV SQUARE
         res = parameters.Instance.lowResolution
@@ -70,10 +71,10 @@ class Simulation(Entity):
         #self.visualisers = set_up_state.setUpTimeState(parameters.Instance)
         
         #For newer faster way
-        # self.tempTuple = set_up_state.modifiedSetUpTimeState(parameters.Instance)
-        # self.planesToAddOverTime:List[List[Dict[Vec2,Vec2]]] = self.tempTuple[0]
-        # self.visualisers:List[Visualizer] = self.tempTuple[1]
-        
+        self.tempTuple = set_up_state.modifiedSetUpTimeState(parameters.Instance)
+        self.planesToAddOverTime:List[List[Dict[Vec2,Vec2]]] = self.tempTuple[0]
+        self.visualisers:List[Visualizer] = self.tempTuple[1]
+        self.lastTick = self.tempTuple[2]
         
         self.occluder = self.create_occluder(parameters.Instance.occluder)
         self.visgroup += (self.create_visualisers(self.visualisers))
@@ -85,32 +86,35 @@ class Simulation(Entity):
 
     #update every pixel of every visualizer to add any waves that have reached it
     def update(self):
-        print(f"update frame{self.currenttickdistance}")
-        for i, visualizer in enumerate(self.visualisers):
-            for visualizerPixel in visualizer.pixels:
-                
-                #Old slower code from older set up function
-                for contribution in visualizerPixel.contributions:
-                    if (self.currenttickdistance-parameters.Instance.tick_distance) < contribution.dist and contribution.dist <= self.currenttickdistance:
-                        visualizerPixel.totalContribution += contribution.vec
-                
-                #Newer faster code for modified set up function
-                # visualizerPixel.totalContribution += self.planesToAddOverTime[i][math.ceil(self.currenttickdistance / parameters.Instance.tick_distance)][visualizerPixel.coordinates]
-                '''
-                [i] - acesses the visualizer
-                [math.ceil(self.currenttickdistance / parameters.Instance.tick_distance)] - acesses the dictionary for the given distance step
-                [visualizerPixel.coordinates] - acesses the key that is the position vector of the pixel on the visualizer (the value is the contribution to add for that frame)
-                '''
-                
-                #color pixels
-                v = self.visgroup[i]
-                b = min(int(utils.length(visualizerPixel.totalContribution)*parameters.Instance.brightnessFactor), 255)
-                v.texture.set_pixel(int(visualizerPixel.coordinates.x),
-                                    int(visualizerPixel.coordinates.y), rgb(b, b, b))
-                v.texture.apply()
-                #print(f"{visualizerPixel.coordinates.x} - {visualizerPixel.coordinates.y}")
-        
-        self.currenttickdistance += 1
+        if math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) <= self.lastTick:
+            print(f"update frame {self.currentTick} of {self.lastTick}")
+            for i, visualizer in enumerate(self.visualisers):
+                for visualizerPixel in visualizer.pixels:
+                    
+                    #Old slower code from older set up function
+                    #for contribution in visualizerPixel.contributions:
+                    #    if (self.currentTickDistance-parameters.Instance.tick_distance) < contribution.dist and contribution.dist <= self.currenttickdistance:
+                    #        visualizerPixel.totalContribution += contribution.vec
+                    
+                    #Newer faster code for modified set up function
+                    if (self.planesToAddOverTime[i][math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1] is not None) and (visualizerPixel.coordinates in self.planesToAddOverTime[i][math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1]):
+                        visualizerPixel.totalContribution += self.planesToAddOverTime[i][math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1][visualizerPixel.coordinates]
+                    '''
+                    [i] - acesses the visualizer
+                    [math.ceil(self.currenttickdistance / parameters.Instance.tick_distance)] - acesses the dictionary for the given distance step
+                    [visualizerPixel.coordinates] - acesses the key that is the position vector of the pixel on the visualizer (the value is the contribution to add for that frame)
+                    '''
+                    
+                    #color pixels
+                    v = self.visgroup[i]
+                    b = min(int(utils.length(visualizerPixel.totalContribution)*parameters.Instance.brightnessFactor), 255)
+                    v.texture.set_pixel(int(visualizerPixel.coordinates.x),
+                                        int(visualizerPixel.coordinates.y), rgb(b, b, b))
+                    v.texture.apply()
+                    #print(f"{visualizerPixel.coordinates.x} - {visualizerPixel.coordinates.y}")
+            
+            self.currentTick += 1
+            self.currentTickDistance += parameters.Instance.tick_distance
                         
         #Then just need to draw it on the screen now that the pixel values are updated
 
