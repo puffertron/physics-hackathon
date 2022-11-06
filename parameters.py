@@ -4,8 +4,6 @@ from PIL import Image
 
 from ursina import *
 
-Instance = None
-
 @dataclass
 class Parameters:
     tick_distance: float = 1
@@ -26,3 +24,4 @@ class Parameters:
     def initParams():
         Instance = Parameters()
 
+Instance: Parameters = None
