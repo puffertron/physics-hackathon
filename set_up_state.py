@@ -29,14 +29,16 @@ class Visualizer:
         self.pixels:List[VisualizerPixel] = []
         
         for x in range(resolution):
+            print(f"Starting row {x} for Visualizer at dist {distz}")
             for y in range(resolution):
                 self.pixels.append(VisualizerPixel(param, Vec2(x,y), distz, holes))
         
 
 def setUpTimeState(param:Parameters) -> List[Visualizer]:
     visualizers:List[Visualizer] = []
+    lowResHoles:List[Vec2] = utils.get_occlusion_holes(Texture(utils.resize_image(param.occluder,param.lowResolution))) #Uses low res occluder
     for i in range(param.visualizerAmount):
-        visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * (i+1), param.lowResolution, utils.get_occlusion_holes(Texture(utils.resize_image(param.occluder,param.lowResolution))))) #Uses low resolution occluder
+        visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * (i+1), param.lowResolution, lowResHoles))
     return visualizers
     
 
