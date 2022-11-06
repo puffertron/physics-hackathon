@@ -8,20 +8,28 @@ app = Ursina()
 class Canvas(Entity):
     def __init__(self, add_to_scene_entities=True, **kwargs):
         super().__init__(add_to_scene_entities, **kwargs)
+        self.dx = 0
+        self.dy = 0
     
     def update(self):
-        res = parameters.lowResolution
+        res = 64
         m = mouse.point
         if mouse.left and m:
             x = int(Vec2((Vec2(m.x,m.z)+Vec2(0.5,0.5))).x * res)
             y = int(Vec2((Vec2(m.x,m.z)+Vec2(0.5,0.5))).y * res)
             print((x,y))
             self.texture.set_pixel(x,y, color.black)
+            
+            self.dx = x
+            self.dy = y
         if mouse.right and m:
             x = int(Vec2((Vec2(m.x,m.z)+Vec2(0.5,0.5))).x * res)
             y = int(Vec2((Vec2(m.x,m.z)+Vec2(0.5,0.5))).y * res)
             print((x,y))
             self.texture.set_pixel(x,y, color.white)
+
+            self.dx = x
+            self.dy = y
         
         self.texture.apply()
 
