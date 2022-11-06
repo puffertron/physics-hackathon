@@ -89,12 +89,12 @@ class ParametersPanel(WindowPanel):
             return False
 
         params = _get_params()
-        params.wavelength = self.wavelength.value
-        params.brightnessFactor = self.brightness.value
-        params.tick_distance = self.tick.value
-        params.visualizerAmount = self.visualizer_amount.value
-        params.detectorDistance = self.detector_distance.value
-        params.lowResolution = self.low_res.value
+        params.wavelength = self.wavelength.value * 0.001 #nm to um
+        params.brightnessFactor = self.brightness.value * 1
+        params.tick_distance = self.tick.value * 1000 #mm to um
+        params.visualizerAmount = self.visualizer_amount.value * 1
+        params.detectorDistance = self.detector_distance.value * 1000 #mm to um
+        params.lowResolution = self.low_res.value * 1
         params.highResolution = self.high_res.value
         return True
 
@@ -126,9 +126,9 @@ class ParametersPanel(WindowPanel):
 
         self.file_warning = Text("A slit mask must be chosen before simulation", color=color.red, visible=False)
 
-        self.wavelength = ThinSlider(min=100, max=1, step=0.00001, default=0.001) #  nm
-        self.brightness = ThinSlider(min=1000, max=5000, step=10, default=500)
-        self.tick = ThinSlider(min=50, max=1000, step=1, default=0.001)
+        self.wavelength = ThinSlider(min=50, max=950, step=10, default=500) #  nm
+        self.brightness = ThinSlider(min=100, max=5000, step=10, default=500)
+        self.tick = ThinSlider(min=1, max=1000, step=1, default=1)
 
         self.file_button = Button(make_file_button_text(None))
         self.file_browser = FileBrowser(
@@ -145,10 +145,10 @@ class ParametersPanel(WindowPanel):
         self.file_browser.cancel_button.on_click = self.onSelectFileCancelled
         self.file_browser.cancel_button_2.on_click = self.onSelectFileCancelled
 
-        self.visualizer_amount = ThinSlider(min=2, max=10, default=2, step=1)
-        self.detector_distance = ThinSlider(min=1, max=12, default=7)
+        self.visualizer_amount = ThinSlider(min=1, max=10, default=3, step=1)
+        self.detector_distance = ThinSlider(min=10, max=10000, default=100, step=10)
 
-        self.low_res = ThinSlider(min=8, max=128, step=16, default=16)
+        self.low_res = ThinSlider(min=8, max=128, step=8, default=32)
         self.low_res.on_value_changed = lambda: updateResolution(self.low_res)
 
         self.high_res = ThinSlider(min=16, max=512, step=16, default=32)
