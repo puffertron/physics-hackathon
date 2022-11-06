@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from PIL import Image
 
+SoftInstance = None
 Instance = None
 
 @dataclass
@@ -18,9 +19,24 @@ class Parameters:
 
     lowResolution: int = 64  # For all planes in time simulation
     highResolution: int = 128  # For all planes in final state simulation
+    
+    brightnessFactor:float = 1 #Turn up to make brighter pixels, will probably need to be a few hundred or more to see anything
+
+    def printToConsole(self):
+
+        print()
+        for attr in dir(self):
+            if not attr.startswith("__") and not attr == "printToConsole":
+                print(f"{attr}: {getattr(self, attr)}")
+
+        print()
 
 
 def initParams():
-    global Instance
-    Instance = Parameters()
+    global SoftInstance, Instance
 
+    if SoftInstance is None:
+        SoftInstance = Parameters()
+
+    if Instance is None:
+        Instance = Parameters()

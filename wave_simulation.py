@@ -8,11 +8,9 @@ app = Ursina(title="Wave Simulation")
 
 
 if __name__ == "__main__":
-    ed = EditorCamera()
-    ed.position.y = 5
-    ed.look_at(Vec3(0,0,0))
-    
-    #paramPanel = ParametersPanel()
+
+    parameters.initParams()
+    paramPanel = ParametersPanel()
 
     
 

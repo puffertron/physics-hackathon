@@ -41,7 +41,7 @@ class Visualizer:
 def setUpTimeState(param:Parameters) -> List[Visualizer]:
     visualizers:List[Visualizer] = []
     for i in range(param.visualizerAmount):
-        visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * i, param.lowResolution, False))
+        visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * (i+1), param.lowResolution, False))
     return visualizers
     
 
