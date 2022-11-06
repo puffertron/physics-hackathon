@@ -119,5 +119,8 @@ def modifiedSetUpTimeState(param:Parameters) -> Tuple[List[List[Dict[Vec2,Vec2]]
     
     return planesToAddOverTime, visualizers, maxNumberOfSteps
 
+
+
+#DEPRECATED - Final State Sim not actually used, we realized this wouldn't be much faster than t-sim with one visualizer
 def setUpFinalDetectorState(param:Parameters) -> Visualizer:
     return Visualizer(param, param.detectorDistance, param.highResolution, utils.get_occlusion_holes(Texture(param.occluder))) #Uses High Res Holes

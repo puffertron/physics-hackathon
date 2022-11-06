@@ -7,6 +7,10 @@ Instance = None
 
 @dataclass
 class Parameters:
+
+    # Generally all of these default values aren't used for the simulation. They are only used to verify the types of
+    # values that are inserted into it by the GUI
+
     tick_distance: float = 0.5 #This is also in pixels, in simulation it doesn't look like it because z is skewed (already a TODO elesewhere to fix it)
 
     wavelength: float = 1 #Also in pixels haha, every length unit is in pixles
@@ -21,6 +25,7 @@ class Parameters:
     lowResolution: int = 16 # For all planes in time simulation
 
     highResolution: int = 64  # For all planes in final state simulation
+
 
 
     def printToConsole(self):

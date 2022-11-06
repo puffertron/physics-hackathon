@@ -89,6 +89,7 @@ class Simulation(Entity):
         if math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) <= self.lastTick:
             print(f"update frame {self.currentTick} of {self.lastTick}")
             for i, visualizer in enumerate(self.visualisers):
+                currentVisualizerPlaneToAdd = self.planesToAddOverTime[i] #Putting this here so it doesn't have to do an extra accessing element on a list every time
                 for visualizerPixel in visualizer.pixels:
                     
                     #Old slower code from older set up function
@@ -97,7 +98,7 @@ class Simulation(Entity):
                     #        visualizerPixel.totalContribution += contribution.vec
                     
                     #Newer faster code for modified set up function
-                    if (self.planesToAddOverTime[i][math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1] is not None) and (visualizerPixel.coordinates in self.planesToAddOverTime[i][math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1]):
+                    if (currentVisualizerPlaneToAdd[math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1] is not None) and (visualizerPixel.coordinates in self.planesToAddOverTime[i][math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1]): #TODO stop redoing calc over and over again
                         visualizerPixel.totalContribution += self.planesToAddOverTime[i][math.ceil(self.currentTickDistance / parameters.Instance.tick_distance) - 1][visualizerPixel.coordinates]
                     '''
                     [i] - acesses the visualizer
