@@ -19,9 +19,7 @@ class Canvas(Entity):
             y = int(Vec2((Vec2(m.x,m.z)+Vec2(0.5,0.5))).y * res)
             print((x,y))
             self.texture.set_pixel(x,y, color.black)
-            
-            self.dx = x
-            self.dy = y
+
         if mouse.right and m:
             x = int(Vec2((Vec2(m.x,m.z)+Vec2(0.5,0.5))).x * res)
             y = int(Vec2((Vec2(m.x,m.z)+Vec2(0.5,0.5))).y * res)
