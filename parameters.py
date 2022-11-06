@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Set
 
 from ursina import Vec2
 
@@ -10,7 +11,7 @@ class Parameters:
     wavelength: float = 500
     brightnessFactor: float = 1
 
-    occluder: set[Vec2] = frozenset([Vec2(0, 0)])
+    occluder: Set[Vec2] = frozenset([Vec2(0, 0)])
 
     visualizerAmount: int = 2
 
