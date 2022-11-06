@@ -60,16 +60,22 @@ class ParametersPanel(WindowPanel):
     def update_high_res(self):
         set_param("highResolution", updateResolution(self.high_res))
 
-    def on_simulate(self):
-        get_params().printToConsole()
-        self.simulate_func()
+    def update_sim_state(self):
+        value: str = self.start_stop.value
+        if value == "start":
+            self.start_sim()
+        elif value == "stop":
+            self.stop_sim()
+        else:
+            raise AssertionError(f"Start/Stop button group should have value of start or stop, has {value}")
 
-    def __init__(self, simulate_func: Callable):
+    def __init__(self, start_sim: Callable, stop_sim: Callable):
         """
         simulateFunction: function that will be called when the simulate button is called
         """
 
-        self.simulate_func = simulate_func
+        self.start_sim = start_sim
+        self.stop_sim = stop_sim
 
         # UI elements:
 
@@ -104,13 +110,13 @@ class ParametersPanel(WindowPanel):
         self.detector_distance.on_value_changed = lambda: set_param("detectorDistance", self.detector_distance.value)
 
         self.low_res = ThinSlider(min=16, max=128, step=16, default=16)
-        self.low_res.on_value_changed = lambda: self.update_low_res()
+        self.low_res.on_value_changed = self.update_low_res
 
         self.high_res = ThinSlider(min=32, max=516, step=32, default=32)
-        self.high_res.on_value_changed = lambda: self.update_high_res()
+        self.high_res.on_value_changed = self.update_high_res
 
-        self.simulate = Button(text="Run Simulation")
-        self.simulate.on_click = self.on_simulate
+        self.start_stop = ButtonGroup(("start", "stop"), default="stop")
+        self.start_stop.on_value_changed = self.update_sim_state
 
         super().__init__(title="Simulation Parameters", position=(-.5, .25), content=(
             Text("Wavelength"),
@@ -128,5 +134,5 @@ class ParametersPanel(WindowPanel):
             self.low_res,
             Text("High resolution (Last visualizer)"),
             self.high_res,
-            self.simulate
+            self.start_stop
         ))
