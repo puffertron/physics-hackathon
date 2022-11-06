@@ -7,6 +7,8 @@ def final_State_Simulate(param:Parameters, spaceToDrawOn:type): #Replace spaceTo
     #Add C to C_total for every hole, so after this all of total_contribution's should be total values
     for detectorPixel in detectorState.pixels:
         for holeContribution in detectorPixel.contributions:
-            detectorPixel.total_contribution += holeContribution.vec
+            detectorPixel.totalContribution += holeContribution.vec
+            
+    #Now just need to draw magnitude of pixels.totalContribution for every detectorState.pixels at pixel.coordinate
         
     
