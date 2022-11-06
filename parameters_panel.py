@@ -54,7 +54,7 @@ class MainGui:
             else:
                 print("could not flush parameters")
                 # Note that this actually causes __change_sim_state to be called again
-                self.run_switch.value = False
+                self.run_switch.value = "stop"
 
         elif value == "stop":
             self.param_panel.enable = True
