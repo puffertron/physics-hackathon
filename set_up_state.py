@@ -97,7 +97,7 @@ def modifiedSetUpTimeState(param:Parameters) -> Tuple[List[List[Dict[Vec2,Vec2]]
         visualizerContributionPlane:List[Dict[Vec2,Vec2]] = [None]*maxNumberOfSteps #Each dict has space for a whole plane of points, and we have a dictionary for every step 
         for pixel in visualizer.pixels:
             for contribution in pixel.contributions:
-                properTimeStep:int = math.ceil(contribution.dist / param.tick_distance) #Distance / distance per tick, rounded up
+                properTimeStep:int = math.ceil(contribution.dist / param.tick_distance) #Distance / distance per tick, rounded up - should be proper distance step
                 #the contribution should be added to the plane corresponding to the above time step
                 if (visualizerContributionPlane[properTimeStep-1] is None):
                     visualizerContributionPlane[properTimeStep-1] = dict()
