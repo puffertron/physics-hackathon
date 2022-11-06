@@ -24,8 +24,6 @@ class Parameters:
 
     lowResolution: int = 16 # For all planes in time simulation
 
-    highResolution: int = 64  # For all planes in final state simulation
-
 
 
     def printToConsole(self):
