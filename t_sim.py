@@ -56,7 +56,7 @@ class Simulation(Entity):
         #self.visgroup += (self.create_visualisers(self.visualisers))
 
         #DEBUG UV SQUARE
-        res = parameters.Instance.lowResolution
+        res = parameters.Instance.lowResolutionblack
         uvtex = Texture(Image.new(mode="RGBA", size=(res,res), color=(255,0,0,255)))
         uvtex.default_filtering = None
         uv = Entity(model='plane', texture=uvtex, position=(0,-3,0)) # set a PIL texture
