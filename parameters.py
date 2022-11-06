@@ -18,6 +18,8 @@ class Parameters:
 
     lowResolution: int = 64  # For all planes in time simulation
     highResolution: int = 128  # For all planes in final state simulation
+    
+    brightnessFactor:float = 1 #Turn up to make brighter pixels, will probably need to be a few hundred or more to see anything
 
 
 def initParams():
