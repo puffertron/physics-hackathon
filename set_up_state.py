@@ -25,6 +25,24 @@ class VisualizerPixel:
             individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,param.wavelength)))
             self.contributions.append(individualContribution)
     
+
+# class Visualizer: #THREADS!!!!
+#     def thread_pixels(self, x, holes, resolution, distz):
+#         print(f"Starting row {x} for Visualizer at dist {distz}")
+#         for y in range(resolution):
+#             self.pixels.append(VisualizerPixel(parameters.Instance, Vec2(x,y), distz, holes)) 
+
+#     def __init__(self, param:Parameters, distz:float, resolution:int, holes:List[Vec2]):
+#         self.distz:float = distz
+#         self.pixels:List[VisualizerPixel] = []
+
+#         p=mp.Pool(4)
+#         p.starmap_async(self.thread_pixels, zip(range(0,resolution), repeat(holes), repeat(resolution), repeat(distz)))
+#         p.close()
+#         p.join()
+        
+
+
 class Visualizer:
     def __init__(self, param:Parameters, distz:float, resolution:int, holes:List[Vec2]):
         self.distz:float = distz

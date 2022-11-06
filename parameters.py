@@ -18,7 +18,9 @@ class Parameters:
     detectorDistance: float = 10
 
     lowResolution: int = 32 # For all planes in time simulation
-    highResolution: int = 32  # For all planes in final state simulation
+    
+    highResolution: int = 64  # For all planes in final state simulation
+
     
 
     def printToConsole(self):
