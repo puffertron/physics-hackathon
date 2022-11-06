@@ -13,11 +13,11 @@ parameters.initParams()
 zoffset = 2
 
 
-def create_occluder(tex):
+def create_occluder(tex:Texture):
     #occluder params texture is an IMAGE instance not TEXTURE
     occluder = Entity(model='plane', texture=Texture(tex), position=Vec3(0,zoffset,0))
     return occluder
-def create_visualisers(visuals):
+def create_visualisers(visuals:Visualizer):
     l = []
     for i, v in enumerate(visuals, start=1):
         #TODO: Vary alpha/hue per plane
