@@ -95,7 +95,6 @@ class ParametersPanel(WindowPanel):
         params.visualizerAmount = self.visualizer_amount.value * 1
         params.detectorDistance = self.detector_distance.value * 1000 #mm to um
         params.lowResolution = self.low_res.value * 1
-        params.highResolution = self.high_res.value
         params.width = self.width.value
         return True
 
