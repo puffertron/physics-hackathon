@@ -53,9 +53,21 @@ class Simulation(Entity):
     
     def begin(self):
         #get initialised planes
-        visualisers = set_up_state.setUpTimeState(parameters.Instance)
+        visualisers = set_up_state.setUpTimeState(parameters.Instance, cache=1, usecache=0)
         self.occluder = self.create_occluder(parameters.Instance.occluder)
         self.visgroup += (self.create_visualisers(visualisers))
+
+        #DEBUG UV SQUARE
+        res = parameters.Instance.lowResolution
+        uvtex = Texture(Image.new(mode="RGBA", size=(res,res), color=(255,0,0,255)))
+        uvtex.default_filtering = None
+        uv = Entity(model='plane', texture=uvtex, position=(0,-3,0)) # set a PIL texture
+        for x in range (0, uv.texture.width):
+            for y in range (0, uv.texture.height):
+                uv.texture.set_pixel(x, y, rgb(x*255/res, y*255/res,0))
+
+        uv.texture.apply()
+
         
         self.visualisers = visualisers
         print("begun")
@@ -75,8 +87,9 @@ class Simulation(Entity):
                 v = self.visgroup[i]
                 b = int(utils.length(visualizerPixel.totalContribution)*parameters.Instance.brightnessFactor)
                 v.texture.set_pixel(int(visualizerPixel.coordinates.x),
-                                    int(visualizerPixel.coordinates.y),
-                                    rgb(b, b, b))
+                                    int(visualizerPixel.coordinates.y), rgb(b, b, b))
+                v.texture.apply()
+                #print(f"{visualizerPixel.coordinates.x} - {visualizerPixel.coordinates.y}")
         
         self.currenttickdistance += 1
                         

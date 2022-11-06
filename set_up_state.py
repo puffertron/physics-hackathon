@@ -5,6 +5,7 @@ from ursina import *
 from dataclasses import dataclass
 from typing import List
 import calculations
+import pickle
 
 
 @dataclass
@@ -34,11 +35,35 @@ class Visualizer:
                 self.pixels.append(VisualizerPixel(param, Vec2(x,y), distz, holes))
         
 
-def setUpTimeState(param:Parameters) -> List[Visualizer]:
+def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
     visualizers:List[Visualizer] = []
-    lowResHoles:List[Vec2] = utils.get_occlusion_holes(Texture(utils.resize_image(param.occluder,param.lowResolution))) #Uses low res occluder
-    for i in range(param.visualizerAmount):
-        visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * (i+1), param.lowResolution, lowResHoles))
+    if usecache == 0: #if no use cache
+        lowResHoles:List[Vec2] = utils.get_occlusion_holes(Texture(utils.resize_image(param.occluder,param.lowResolution))) #Uses low res occluder
+        for i in range(param.visualizerAmount):
+            visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * (i+1), param.lowResolution, lowResHoles))
+
+        if cache == 1:
+            #cache if needed
+            f = open("cache.pkl", "wb")
+            cache = pickle.dump(visualizers, f)
+            print("cache written")
+            f.close()
+    
+
+    else: #if yee cache
+        #check for cache
+        file = None
+        try:
+            file = open("cache.pkl", "rb")
+        except:
+            #cache is not there:
+            print("cache does not exist")
+            visualizers = setUpTimeState(param, cache=cache, usecache=0)
+        else:
+            visualizers = (pickle.load(file))
+            file.close()
+            print("cache got")
+
     return visualizers
     
 

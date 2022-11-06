@@ -12,9 +12,14 @@ if __name__ == "__main__":
     parameters.initParams()
     #paramPanel = ParametersPanel()
 
-    ed = EditorCamera()
-    ed.position.y = 5
-    ed.look_at(Vec3(0,0,0))
+    #ed = EditorCamera()
+    #ed.position.y = 5
+    # ed.look_at(Vec3(0,0,0))
+
+    cam = camera
+    cam.position = Vec3(7,7,-7)
+    cam.look_at(Vec3(0,0,0), 'forward')
+    cam.rotation_z = 0
 
     
 

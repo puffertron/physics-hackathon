@@ -13,11 +13,11 @@ class Parameters:
 
     occluder: Image = Image.open("images/2slit.png")
 
-    visualizerAmount: int = 3
+    visualizerAmount: int = 4
 
-    detectorDistance: float = 10
+    detectorDistance: float = 3
 
-    lowResolution: int = 64  # For all planes in time simulation
+    lowResolution: int = 32 # For all planes in time simulation
     highResolution: int = 128  # For all planes in final state simulation
     
     brightnessFactor:float = 1 #Turn up to make brighter pixels, will probably need to be a few hundred or more to see anything
