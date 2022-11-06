@@ -21,7 +21,7 @@ class VisualizerPixel:
         self.totalContribution:Vec2 = Vec2(0,0)
             
         for hole in holes:
-            distance = calculations.distance(coordinates.x,coordinates.y,distz)
+            distance = calculations.distance(coordinates.x-hole.x,coordinates.y-hole.y,distz)
             individualContribution:Contribution = Contribution(distance,Vec2(calculations.cartesian(distz,distance,param.wavelength)))
             self.contributions.append(individualContribution)
     
@@ -40,6 +40,7 @@ def setUpTimeState(param:Parameters, cache=0, usecache=0) -> List[Visualizer]:
     visualizers:List[Visualizer] = []
     if usecache == 0: #if no use cache
         lowResHoles:List[Vec2] = utils.get_occlusion_holes(Texture(utils.resize_image(param.occluder,param.lowResolution))) #Uses low res occluder
+        print(lowResHoles)
         for i in range(param.visualizerAmount):
             visualizers.append(Visualizer(param,param.detectorDistance/param.visualizerAmount * (i+1), param.lowResolution, lowResHoles))
 
