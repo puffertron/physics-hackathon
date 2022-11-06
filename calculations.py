@@ -22,7 +22,9 @@ def amplitude(distz: float, dist: float) -> float:
 
 
 # Calculating pixel color values
-def cartesian(amp: float, ang: float) -> Vec2:
+def cartesian(dz: float, dist: float, wavelength: float) -> Vec2:
+    amp = amplitude(dz, dist)
+    ang = angle(wavelength, dist)
     x = amp * math.cos(ang)
     y = amp * math.sin(ang)
     return Vec2(x,y)
